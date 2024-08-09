@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     BoddyHome: typeof import('./src/components/BoddyHome.vue')['default']
     CabecalhoHome: typeof import('./src/components/CabecalhoHome.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     RodaPe: typeof import('./src/components/RodaPe.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
