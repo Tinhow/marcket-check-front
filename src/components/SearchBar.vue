@@ -17,15 +17,20 @@
     ></v-autocomplete>
 
     <div v-if="selectedProductData" class="product-details">
-      <h3>{{ selectedProductData.nome }}</h3>
-      <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
-      <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
-      <p><strong>Marca:</strong> {{ selectedProductData.marca }}</p>
-      <p><strong>Preço:</strong> {{ selectedProductData.preco }}</p>
-      <p><strong>Unidade de Medida:</strong> {{ selectedProductData.unidade_de_medida }}</p>
-      <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-      <p><strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}</p>
-      <p><strong>Nome do Mercado:</strong> {{ selectedProductData.nome_mercado }}</p>
+      <div class="image-container">
+        <img :src="selectedProductData.imagem" alt="Imagem do Produto" width="150" height="150">
+      </div>
+      <div class="details-container">
+        <h3>{{ selectedProductData.nome }}</h3>
+        <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
+        <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
+        <p><strong>Marca:</strong> {{ selectedProductData.marca }}</p>
+        <p><strong>Preço:</strong> {{ selectedProductData.preco }}</p>
+        <p><strong>Unidade de Medida:</strong> {{ selectedProductData.unidade_de_medida }}</p>
+        <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
+        <p><strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}</p>
+        <p><strong>Nome do Mercado:</strong> {{ selectedProductData.nome_mercado }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -87,5 +92,16 @@ fetchProducts();
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #fff;
+  display: flex;
+  align-items: flex-start;
+}
+
+.image-container {
+  margin-right: 20px;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
 }
 </style>

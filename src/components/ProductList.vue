@@ -3,15 +3,18 @@
     <h1 class="title text-white">Listagem de Produtos</h1>
     <div class="product-container">
       <div :key="product.id" v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
-        <h3>{{ product.nome }}</h3>
-        <p><strong>Descrição:</strong> {{ product.descricao }}</p>
-        <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-        <p><strong>Marca:</strong> {{ product.marca }}</p>
-        <p><strong>Preço:</strong> {{ product.preco }}</p>
-        <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
-        <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-        <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
-        <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+        <img :src="product.imagem" alt="Imagem do Produto" width="100" height="100">
+        <div class="product-info">
+          <h3>{{ product.nome }}</h3>
+          <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+          <p><strong>Categoria:</strong> {{ product.categoria }}</p>
+          <p><strong>Marca:</strong> {{ product.marca }}</p>
+          <p><strong>Preço:</strong> {{ product.preco }}</p>
+          <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
+          <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
+          <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
+          <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+        </div>
       </div>
     </div>
     <div class="pagination">
@@ -21,9 +24,8 @@
         :disabled="currentPage === 1"
         :class="{ 'enabled-button': currentPage > 1 }"
         class="mx-1 bt"
-      >Anterior
-    </button>
-    <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+      >Anterior</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
     </div>
   </div>
 </template>
@@ -98,14 +100,24 @@ fetchProducts();
 
 .list-product {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   width: 250px;
-  height: 270px;
+  height: 250px;
   background-color: white;
   margin-bottom: 10px;
+}
+
+.product-info {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  
 }
 
 .pagination {
