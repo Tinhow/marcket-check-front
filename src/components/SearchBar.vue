@@ -20,7 +20,7 @@
       <div class="image-container">
         <img :src="selectedProductData.imagem" alt="Imagem do Produto" width="150" height="150">
       </div>
-      <div class="details-container">
+      <div class="details-container" >
         <h3>{{ selectedProductData.nome }}</h3>
         <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
         <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
