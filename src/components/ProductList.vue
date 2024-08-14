@@ -1,38 +1,40 @@
 <template>
-<div class="list-product-container">
-    <div v-for="product in paginatedProducts" class="list-product">
-      <h3>{{ product.nome }}</h3>
-      <p><strong>Descrição:</strong> {{ product.descricao }}</p>
-      <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-      <p><strong>Marca:</strong> {{ product.marca }}</p>
-      <p><strong>Preço:</strong> {{ product.preco }}</p>
-      <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
-      <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-      <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
-      <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+  <div class="shape bg-dark p-2">
+    <h1 class="title text-white">Listagem de Produtos</h1>
+    <div class="product-container">
+      <div v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
+        <h3>{{ product.nome }}</h3>
+        <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+        <p><strong>Categoria:</strong> {{ product.categoria }}</p>
+        <p><strong>Marca:</strong> {{ product.marca }}</p>
+        <p><strong>Preço:</strong> {{ product.preco }}</p>
+        <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
+        <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
+        <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
+        <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+      </div>
     </div>
-  </div>
-
-  
-  <div class="pagination">
-    <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <div class="pagination">
+      <span class="text-white mx-1">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button
+        @click="prevPage"
+        :disabled="currentPage === 1"
+        :class="{ 'enabled-button': currentPage > 1 }"
+        class="mx-1 bt"
+      >Anterior
+    </button>
     <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 
 const products = ref([]);
-const selectedProduct = ref(null);
-const selectedProductData = ref(null);
-
-// Configurações de paginação
 const currentPage = ref(1);
-const itemsPerPage = ref(9); // Número de produtos por página definido como 9
+const itemsPerPage = ref(8); 
 
-// Função para buscar produtos
 async function fetchProducts() {
   try {
     const response = await fetch('http://127.0.0.1:3000/produtos.json');
@@ -71,31 +73,39 @@ fetchProducts();
 </script>
 
 <style scoped>
-.list-product-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  justify-items: center;
-  margin-top: 20px;
+.shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  overflow-y: auto;
+  margin: 0 10px;
+  border: 2px solid #ACACAC;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
 }
 
 .list-product {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #fff;
-  width: 100%;
-  max-width: 250px; 
-  box-sizing: border-box;
-}
-
-.product-details {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  max-width: 450px;
+  width: 250px;
+  height: 270px;
+  background-color: white;
+  margin-bottom: 10px;
 }
 
 .pagination {
@@ -103,7 +113,7 @@ fetchProducts();
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  gap: 10px;
+  width: 100%;
 }
 
 .pagination button {
@@ -122,5 +132,26 @@ fetchProducts();
 
 .pagination span {
   font-size: 1rem;
+}
+
+.bg-dark {
+  background-color: #ACACAC;
+}
+
+.enabled-button {
+  background-color: #da0707 !important; 
+}
+
+.shape::-webkit-scrollbar {
+  width: 8px;
+}
+
+.shape::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.shape::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

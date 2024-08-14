@@ -16,7 +16,6 @@
       rounded
     ></v-autocomplete>
 
-    <!-- Exibe as informações do produto selecionado -->
     <div v-if="selectedProductData" class="product-details">
       <h3>{{ selectedProductData.nome }}</h3>
       <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
@@ -50,7 +49,6 @@ async function fetchProducts() {
   }
 }
 
-// Atualiza os dados do produto selecionado
 watch(selectedProduct, (newValue) => {
   if (newValue !== null) {
     selectedProductData.value = products.value.find(product => product.id === newValue);
@@ -71,13 +69,6 @@ fetchProducts();
   flex-direction: column;
   align-items: center;
   padding: 15px;
-}
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
 }
 
 .bg-dark {

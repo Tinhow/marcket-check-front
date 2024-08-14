@@ -3,10 +3,10 @@
         <div class="div1">
             <v-row class="center">
             <v-col cols="12" md="6" class="center">
-                <h2>Encontre os melhores preços</h2>
+                <h2>Encontre os melhores preços !</h2>
                 <h2>
                     <router-link to="/search" >
-                        <v-btn >Compare</v-btn>
+                        <v-btn >Pesquisar</v-btn>
                     </router-link>
                 </h2>
             </v-col>

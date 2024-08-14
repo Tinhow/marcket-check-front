@@ -5,7 +5,6 @@
       </div>
       <v-divider inset vertical />
       <div class="d-flex links">
-        <!-- Link HOME -->
         <v-hover v-slot:default="{ isHovering, props }">
           <router-link
             class="link mr-4"
@@ -23,8 +22,6 @@
         </v-hover>
   
         <v-divider class="link mr-4" inset vertical />
-  
-        <!-- Link COMPARAR -->
         <v-hover v-slot:default="{ isHovering, props }">
           <router-link
             class="link mr-3"
@@ -37,13 +34,11 @@
               color: isHovering ? 'white' : '#007bff'
             }"
           >
-            <p>COMPARAR</p>
+            <p>PESQUISAR</p>
           </router-link>
         </v-hover>
 
         <v-divider class="link mr-4" inset vertical />
-
-        <!-- Link PRODUTOS -->
         <v-hover v-slot:default="{ isHovering, props }">
           <router-link
             class="link mr-3"
