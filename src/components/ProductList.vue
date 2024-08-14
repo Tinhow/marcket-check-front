@@ -1,6 +1,6 @@
 <template>
   <div class="shape bg-dark p-2">
-    <h1 class="title text-white">Listagem de Produtos.</h1>
+    <h1 class="title text-white">Listagem de Produtos</h1>
     <div class="product-container">
       <div :key="product.id" v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
         <h3>{{ product.nome }}</h3>
