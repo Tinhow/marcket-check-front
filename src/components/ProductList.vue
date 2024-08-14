@@ -2,7 +2,7 @@
   <div class="shape bg-dark p-2">
     <h1 class="title text-white">Listagem de Produtos</h1>
     <div class="product-container">
-      <div v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
+      <div :key="product.id" v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
         <h3>{{ product.nome }}</h3>
         <p><strong>Descrição:</strong> {{ product.descricao }}</p>
         <p><strong>Categoria:</strong> {{ product.categoria }}</p>
