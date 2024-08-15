@@ -1,17 +1,22 @@
 <template>
   <div class="shape bg-dark p-2">
     <h1 class="title text-white">Listagem de Produtos</h1>
-    <div class="product-container">
-      <div :key="product.id" v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
-        <h3>{{ product.nome }}</h3>
-        <p><strong>Descrição:</strong> {{ product.descricao }}</p>
-        <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-        <p><strong>Marca:</strong> {{ product.marca }}</p>
-        <p><strong>Preço:</strong> {{ product.preco }}</p>
-        <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
-        <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-        <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
-        <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+    <div class="product-details-container mx-2">
+      <div :key="product.id" v-for="product in paginatedProducts" class="product-details d-flex mt-2">
+        <div class="product-image py-8 px-2">
+          <img :src="product.imagem"> 
+        </div>
+        <div class="product-info px-2">
+          <h3>{{ product.nome }}</h3>
+          <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+          <p><strong>Categoria:</strong> {{ product.categoria }}</p>
+          <p><strong>Marca:</strong> {{ product.marca }}</p>
+          <p><strong>Preço:</strong> {{ product.preco }}</p>
+          <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
+          <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
+          <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
+          <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+        </div>
       </div>
     </div>
     <div class="pagination">
@@ -21,9 +26,8 @@
         :disabled="currentPage === 1"
         :class="{ 'enabled-button': currentPage > 1 }"
         class="mx-1 bt"
-      >Anterior
-    </button>
-    <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+      >Anterior</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
     </div>
   </div>
 </template>
@@ -80,32 +84,37 @@ fetchProducts();
   padding: 15px;
   border-radius: 8px;
   overflow-y: auto;
-  margin: 0 10px;
   border: 2px solid #ACACAC;
+  margin-left: 10px;
+  margin-right: 10px;
+
 }
+
+.product-details-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  flex: 1;
+}
+
 
 .title {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.product-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  flex: 1;
-}
-
-.list-product {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+.product-details {
+  margin-top: 20px;
+  margin: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 250px;
-  height: 270px;
-  background-color: white;
-  margin-bottom: 10px;
+  background-color: #fff;
+  font-size: 18px;
+  width: 600px;
+  max-height: 350px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .pagination {
@@ -142,6 +151,16 @@ fetchProducts();
   background-color: #da0707 !important; 
 }
 
+.product-image {
+  height: 320px;
+  width: 320px;
+}
+
+.product-info {
+  flex: 1; 
+  display: flex;
+  flex-direction: column; 
+}
 .shape::-webkit-scrollbar {
   width: 8px;
 }

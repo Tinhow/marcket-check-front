@@ -3,7 +3,7 @@
         <div class="div1">
             <v-row class="center">
             <v-col cols="12" md="6" class="center">
-                <h2>Encontre os melhores preços !</h2>
+                <h1 class="">Encontre os melhores preços!</h1>
                 <h2>
                     <router-link to="/search" >
                         <v-btn >Pesquisar</v-btn>
@@ -13,7 +13,7 @@
         </v-row>
     </div>
         <div class="div2 ">
-            <img class="img" src="@/assets/market2.png" alt="Logo" />
+            <img class="img" src="@/assets/market3.png" alt="Logo" />
         </div>
         
     </div>
