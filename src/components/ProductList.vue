@@ -1,10 +1,20 @@
 <template>
   <div class="shape bg-dark p-2">
     <h1 class="title text-white">Listagem de Produtos</h1>
-    <div class="product-container">
-      <div :key="product.id" v-for="product in paginatedProducts" class="list-product mx-4 mt-2">
-        <img :src="product.imagem" alt="Imagem do Produto" width="100" height="100">
-        <div class="product-info">
+    <div class="D-flex" style="flex-direction: row;">
+    <v-checkbox
+        v-model="isAscending"
+        label="Ordenar por preço crescente"
+        @change="fetchProducts"
+        class="mb-10 checkbox"
+      ></v-checkbox>
+    </div>
+    <div class="product-details-container mx-2">
+      <div :key="product.id" v-for="product in paginatedProducts" class="product-details d-flex mt-2">
+        <div class="product-image py-8 px-2">
+          <img :src="product.imagem"> 
+        </div>
+        <div class="product-info px-2">
           <h3>{{ product.nome }}</h3>
           <p><strong>Descrição:</strong> {{ product.descricao }}</p>
           <p><strong>Categoria:</strong> {{ product.categoria }}</p>
@@ -37,9 +47,14 @@ const products = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8); 
 
+const isAscending = ref(false);
+
 async function fetchProducts() {
+  const orderQuery = isAscending.value ? 'preco_crescente' : 'preco_decrescente';
+  const url = `http://localhost:3000/produtos.json?order=${orderQuery}&commit=Search`;
+
   try {
-    const response = await fetch('http://127.0.0.1:3000/produtos.json');
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -82,32 +97,37 @@ fetchProducts();
   padding: 15px;
   border-radius: 8px;
   overflow-y: auto;
-  margin: 0 10px;
   border: 2px solid #ACACAC;
+  margin-left: 10px;
+  margin-right: 10px;
+
 }
+
+.product-details-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  flex: 1;
+}
+
 
 .title {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.product-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  flex: 1;
-}
-
-.list-product {
-  display: flex;
-  align-items: center;
-  padding: 10px;
+.product-details {
+  margin-top: 20px;
+  margin: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 250px;
-  height: 250px;
-  background-color: white;
-  margin-bottom: 10px;
+  background-color: #fff;
+  font-size: 18px;
+  width: 600px;
+  max-height: 350px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .product-info {
@@ -154,6 +174,16 @@ fetchProducts();
   background-color: #da0707 !important; 
 }
 
+.product-image {
+  height: 320px;
+  width: 320px;
+}
+
+.product-info {
+  flex: 1; 
+  display: flex;
+  flex-direction: column; 
+}
 .shape::-webkit-scrollbar {
   width: 8px;
 }
