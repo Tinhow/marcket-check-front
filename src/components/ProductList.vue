@@ -16,6 +16,9 @@
           <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
           <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+          <div class="my-1">
+            <v-btn class="bg-primary">Favoritar</v-btn>
+          </div>
         </div>
       </div>
     </div>
@@ -111,7 +114,7 @@ fetchProducts();
   background-color: #fff;
   font-size: 18px;
   width: 600px;
-  max-height: 350px;
+  max-height: 410px;
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -132,6 +135,14 @@ fetchProducts();
   background-color: #007bff;
   color: #fff;
   cursor: pointer;
+}
+
+.button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
 }
 
 .pagination button:disabled {

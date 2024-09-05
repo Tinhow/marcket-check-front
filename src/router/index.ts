@@ -3,12 +3,14 @@ import HomePage from '@/pages/HomePage.vue'
 import SearchPage from '@/pages/SearchPage.vue'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import ProductListPage from '@/pages/ProductListPage.vue'
+import FavoritosPage from '@/pages/FavoritosPage.vue'
 
 
 const routes = [
   {path: '/', component: HomePage},
   {path: '/search', component: SearchPage},
   {path: '/products', component: ProductListPage},
+  {path: '/favorites', component: FavoritosPage}
 
 ]
 
