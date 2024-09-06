@@ -17,7 +17,10 @@
           <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
           <div class="my-1">
-            <v-btn class="bg-primary">Favoritar</v-btn>
+            <v-btn class="bg-primary mr-2" >Favoritar</v-btn>
+            <v-btn class="bg-primary" @click="navigateTo(`/products/${product.id}`)"
+            >vizualizar
+            </v-btn>
           </div>
         </div>
       </div>
@@ -37,7 +40,12 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const navigateTo = (path) => {
+  router.push(path);
+};
 const products = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8); 
@@ -53,6 +61,25 @@ async function fetchProducts() {
     console.error('Erro ao buscar produtos:', error);
   }
 }
+
+// async function addFavorite(product) {
+//   try {
+//     const response = await fetch(`http://127.0.0.1:3000/favoritos/${product.id}/add`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(product),
+//     });
+//     if (!response.ok) {
+//       throw new Error('Erro ao favoritar produto');
+//     }
+//     console.log('Produto adicionado aos favoritos com sucesso');
+//   } catch (error) {
+//     console.error('Erro ao favoritar produto:', error);
+//   }
+// }
+
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;

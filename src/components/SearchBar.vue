@@ -16,24 +16,23 @@
       rounded
     ></v-autocomplete>
 
-    <div v-if="selectedProductData" class="product-details d-flex">
+    <div v-if="selectedProduct && selectedProductData" class="product-details d-flex">
       <div>
         <img :src="selectedProductData.imagem" class="product-image"> 
       </div>
       <div class="product-info"> 
-        <h2>{{ selectedProductData.nome }}</h2>
+        <h2 class="my-3">{{ selectedProductData.nome }}</h2>
         <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
-        <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
-        <p><strong>Marca:</strong> {{ selectedProductData.marca }}</p>
-        <p><strong>Preço:</strong> {{ selectedProductData.preco }}</p>
-        <p><strong>Unidade de Medida:</strong> {{ selectedProductData.unidade_de_medida }}</p>
-        <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
         <p><strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}</p>
+        <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
         <p><strong>Nome do Mercado:</strong> {{ selectedProductData.nome_mercado }}</p>
+        <h2 class="text-red my-2"><strong>Preço:</strong> {{ selectedProductData.preco }}</h2>
+        <v-btn class="bg-primary" @click="navigateTo(`/products/${selectedProductData.id}`)"
+            >vizualizar</v-btn>
       </div>
     </div>
 
-    <div v-if="otherProducts.length" class="other-products">
+    <div v-if="selectedProduct && otherProducts.length" class="other-products">
       <h2 class="my-3">Outros produtos: {{ selectedProductData?.nome }}</h2>
       <div v-for="product in otherProducts" :key="product.id" class="other-product-item">
         <div class="mt-5">
@@ -48,15 +47,28 @@
           <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
           <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+          <div class="my-2">
+            <v-btn class="bg-primary mr-2" @click="addFavorite(product)">Favoritar</v-btn>
+            <v-btn class="bg-primary" @click="navigateTo(`/products/${product.id}`)"
+            >vizualizar
+            </v-btn>
+          </div>
         </div>
       </div>
+      
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const navigateTo = (path) => {
+  router.push(path);
+};
 const products = ref([]);
 const selectedProduct = ref(null);
 const selectedProductData = ref(null);
@@ -87,13 +99,11 @@ async function fetchProducts() {
 watch(selectedProduct, (newValue) => {
   if (newValue !== null) {
     selectedProductData.value = products.value.find(product => product.id === newValue);
-
-    otherProducts.value = products.value
-      .filter(product => 
-        product.nome === selectedProductData.value?.nome &&
-        product.id !== selectedProductData.value.id
-      )
-      .sort((a, b) => b.preco - a.preco);
+    const filteredProducts = products.value
+      .filter(product => product.nome === selectedProductData.value?.nome);
+    const sortedProducts = filteredProducts.sort((a, b) => a.preco - b.preco);
+    selectedProductData.value = sortedProducts[0];
+    otherProducts.value = sortedProducts.slice(1); 
   } else {
     selectedProductData.value = null;
     otherProducts.value = [];
@@ -102,6 +112,7 @@ watch(selectedProduct, (newValue) => {
 
 fetchProducts();
 </script>
+
 
 <style scoped>
 .shape {
@@ -194,3 +205,4 @@ fetchProducts();
   background: #555;
 }
 </style>
+

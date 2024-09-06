@@ -17,7 +17,24 @@
 
 </template>
 <script lang="ts" setup>
+
+
+async function getFavoritos() {
+    try {
+        const response = await fetch('http://127.0.0.1:3000/favoritos', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    } catch (error) {
+        console.error('Erro ao buscar favoritos:', error);
+    }
+
+}
+getFavoritos();
 </script>
+
 <style scoped>
     .shape {
         height: 100%;
