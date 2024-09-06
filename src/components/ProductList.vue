@@ -6,7 +6,7 @@
         <div class="product-image py-8 px-2">
           <img :src="product.imagem"> 
         </div>
-        <div class="product-info px-2">
+        <div class="product-info px-2 my-2">
           <h3>{{ product.nome }}</h3>
           <p><strong>Descrição:</strong> {{ product.descricao }}</p>
           <p><strong>Categoria:</strong> {{ product.categoria }}</p>
@@ -18,7 +18,7 @@
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
           <div class="my-1">
             <v-btn class="bg-primary mr-2" >Favoritar</v-btn>
-            <v-btn class="bg-primary" @click="navigateTo(`/products/${product.id}`)"
+            <v-btn class="bg-green" @click="navigateTo(`/products/${product.id}`)"
             >vizualizar
             </v-btn>
           </div>
@@ -141,7 +141,7 @@ fetchProducts();
   background-color: #fff;
   font-size: 18px;
   width: 600px;
-  max-height: 410px;
+  max-height: 400px;
   flex: 1;
   justify-content: center;
   align-items: center;
