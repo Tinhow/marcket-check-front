@@ -1,9 +1,10 @@
 <template>
   <div class="shape bg-dark p-2">
-    <h1 class="title text-white">Listagem de Produtos</h1>
+    <h1 class="title text-white">Lista de Produtos</h1>
     <div class="product-details-container mx-2">
-      <div :key="product.id" v-for="product in paginatedProducts" class="product-details d-flex mt-2">
-        <div class="product-image py-8 px-2">
+      <div :key="product.id" v-for="product in paginatedProducts" class="d-flex mt-2">
+        <v-card class="product-card d-flex">
+        <div class="product-image py-6 px-2 justify-center">
           <img :src="product.imagem"> 
         </div>
         <div class="product-info px-2 my-2">
@@ -17,12 +18,13 @@
           <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
           <div class="my-1">
-            <v-btn class="bg-primary mr-2" >Favoritar</v-btn>
+            <v-btn class="bg-primary mr-2" @click="addFavorite(product)">Favoritar</v-btn>
             <v-btn class="bg-green" @click="navigateTo(`/products/${product.id}`)"
             >vizualizar
             </v-btn>
           </div>
         </div>
+        </v-card>
       </div>
     </div>
     <div class="pagination">
@@ -62,24 +64,26 @@ async function fetchProducts() {
   }
 }
 
-// async function addFavorite(product) {
-//   try {
-//     const response = await fetch(`http://127.0.0.1:3000/favoritos/${product.id}/add`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(product),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Erro ao favoritar produto');
-//     }
-//     console.log('Produto adicionado aos favoritos com sucesso');
-//   } catch (error) {
-//     console.error('Erro ao favoritar produto:', error);
-//   }
-// }
-
+async function addFavorite(product) {
+  try {
+    const response = await fetch(`http://127.0.0.1:3000/favoritos/${product.id}/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ id: product.id }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Erro ao favoritar produto');
+    }
+    
+    console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
+  } catch (error) {
+    console.error('Erro ao favoritar produto:', error);
+  }
+}
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -127,24 +131,9 @@ fetchProducts();
   flex: 1;
 }
 
-
 .title {
   text-align: center;
   margin-bottom: 20px;
-}
-
-.product-details {
-  margin-top: 20px;
-  margin: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  font-size: 18px;
-  width: 600px;
-  max-height: 400px;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
 }
 
 .pagination {
@@ -190,14 +179,29 @@ fetchProducts();
 }
 
 .product-image {
-  height: 320px;
-  width: 320px;
+  height: auto;
+  max-height: 200px;
+  width: 250px;
+  justify-content: center;
+  justify-items: center;
+}
+
+.product-card {
+  margin-right: 20px;
+  margin-bottom: 16px;
+  margin-top: 16px; 
+  min-width: 600px; 
+  height: auto;
+  border-radius: 8px;
 }
 
 .product-info {
   flex: 1; 
   display: flex;
   flex-direction: column; 
+  min-width: 400px;
+  min-height: 280px;
+
 }
 .shape::-webkit-scrollbar {
   width: 8px;

@@ -16,28 +16,38 @@
       rounded
     ></v-autocomplete>
 
-    <div v-if="selectedProduct && selectedProductData" class="product-details d-flex">
-      <div>
-        <img :src="selectedProductData.imagem" class="product-image"> 
-      </div>
-      <div class="product-info"> 
-        <h2 class="my-3">{{ selectedProductData.nome }}</h2>
-        <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
-        <p><strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}</p>
-        <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-        <p><strong>Nome do Mercado:</strong> {{ selectedProductData.nome_mercado }}</p>
-        <h2 class="text-red my-2"><strong>Preço:</strong> {{ selectedProductData.preco }}</h2>
-        <v-btn class="bg-primary" @click="navigateTo(`/products/${selectedProductData.id}`)"
+    <div v-if="selectedProduct && selectedProductData" class="d-flex">
+      <v-card class="product-card d-flex">
+        <div class="product-image pt-5 px-10 mt-5 justify-center">
+          <img :src="selectedProductData.imagem" class="image"> 
+        </div>
+        <div class="product-info px-2 my-2">
+          <h3>{{ selectedProductData.descricao }}</h3>
+          <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
+          <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
+          <p><strong>Marca:</strong> {{ selectedProductData.marca }}</p>
+          <p><strong>Preço:</strong> {{ selectedProductData.preco }}</p>
+          <p><strong>Unidade de Medida:</strong> {{ selectedProductData.unidade_de_medida }}</p>
+          <p><strong>Disponibilidade:</strong> {{ selectedProductData.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
+          <p><strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}</p>
+          <p><strong>Nome do Mercado:</strong> {{ selectedProductData.nome_mercado }}</p>
+          <div class="my-1">
+            <v-btn class="bg-primary mr-2" @click="addFavorite(product)">Favoritar</v-btn>
+            <v-btn class="bg-green" @click="navigateTo(`/products/${selectedProductData.id}`)"
             >vizualizar</v-btn>
-      </div>
+          </div>
+        </div>
+        </v-card>
     </div>
 
-    <div v-if="selectedProduct && otherProducts.length" class="other-products">
+    <div v-if="selectedProduct && otherProducts.length">
+      <v-card class="product-card px-5">
       <h2 class="my-3">Outros produtos: {{ selectedProductData?.nome }}</h2>
       <div v-for="product in otherProducts" :key="product.id" class="other-product-item">
         <div class="mt-5">
           <img :src="product.imagem" class="product-image-small"> 
         </div>
+        <v-divider color="white" class="mr-5 ml-10" vertical></v-divider>
         <div class="product-info-small"> 
           <h4>{{ product.nome }}</h4>
           <p><strong>Descrição:</strong> {{ product.descricao }}</p>
@@ -49,13 +59,13 @@
           <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
           <div class="my-2">
             <v-btn class="bg-primary mr-2" @click="addFavorite(product)">Favoritar</v-btn>
-            <v-btn class="bg-primary" @click="navigateTo(`/products/${product.id}`)"
+            <v-btn class="bg-green" @click="navigateTo(`/products/${product.id}`)"
             >vizualizar
             </v-btn>
           </div>
         </div>
       </div>
-      
+    </v-card>
     </div>
   </div>
 </template>
@@ -135,40 +145,49 @@ fetchProducts();
   max-height: 50px;
 }
 
-.product-details {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
+.product-image {
+  height: 100%;
+  max-height: 250px;
+  justify-content: center;
+  justify-items: center;
+}
+
+.image{
+  height: 220px;
+  width: 200px;
+}
+.product-card {
+  margin-right: 20px;
+  margin-bottom: 16px;
+  margin-top: 16px; 
+  min-width: 700px; 
+  height: auto;
   border-radius: 8px;
-  background-color: #fff;
-  max-width: 800px;
-  font-size: 18px;
-  width: 700px;
 }
 
 .product-info {
-  margin-left: 20px;
-}
+  flex: 1; 
+  display: flex;
+  flex-direction: column; 
+  min-height: 280px;
 
-.product-image {
-  height: 320px;
-  width: 320px;
 }
 
 .product-image-small {
-  height: 100px;
-  width: 100px;
+  height: 150px;
+  width: 130px;
 }
 
 .other-products {
   margin-top: 20px;
-  padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #fff;
   max-width: 800px;
   font-size: 16px;
   width: 700px;
+  min-width: 450px;
+
 }
 
 .other-product-item {

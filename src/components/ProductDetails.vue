@@ -54,6 +54,28 @@
       console.error('Erro ao buscar produto:', error);
     }
   }
+
+  async function addFavorite(product) {
+  try {
+    const response = await fetch(`http://127.0.0.1:3000/favoritos/${product.id}/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ id: product.id }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Erro ao favoritar produto');
+    }
+    
+    console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
+  } catch (error) {
+    console.error('Erro ao favoritar produto:', error);
+  }
+}
+
   
   onMounted(() => {
     fetchProduct();
