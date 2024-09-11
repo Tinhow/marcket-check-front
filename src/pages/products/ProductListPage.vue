@@ -1,11 +1,11 @@
 <template>
-<div class="layout-container">
-      <productsList class="body" />
-    </div>
-  </template>
+  <div class="layout-container">
+    <productsList class="body" />
+  </div>
+</template>
 
 <script setup>
-import productsList from '@/components/ProductList.vue'
+import productsList from "@/components/ProductList.vue"
 </script>
 
 <style scoped>

@@ -1,18 +1,19 @@
 <template>
   <div id="app" class="bg-white">
-    <cabecalhoHome class="header"/>
-    <router-view class="router-view"/>
-    <rodaPe class="footer"/>
+    <cabecalhoHome class="header" />
+    <router-view class="router-view" />
+    <rodaPe class="footer" />
   </div>
 </template>
 
 <script setup>
-import cabecalhoHome from '@/components/CabecalhoHome.vue'
-import rodaPe from '@/components/RodaPe.vue'
+import cabecalhoHome from "@/components/CabecalhoHome.vue"
+import rodaPe from "@/components/RodaPe.vue"
 </script>
 
 <style>
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;

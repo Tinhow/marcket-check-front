@@ -2,86 +2,128 @@
   <div class="shape bg-dark p-2">
     <h1 class="title text-white">Lista de Produtos</h1>
     <div class="product-details-container mx-2">
-      <div :key="product.id" v-for="product in paginatedProducts" class="d-flex mt-2">
+      <div
+        v-for="product in paginatedProducts"
+        :key="product.id"
+        class="d-flex mt-2"
+      >
         <v-card class="product-card d-flex">
-        <div class="product-image py-6 px-2 justify-center">
-          <img :src="product.imagem"> 
-        </div>
-        <div class="product-info px-2 my-2">
-          <h3>{{ product.nome }}</h3>
-          <p><strong>Descrição:</strong> {{ product.descricao }}</p>
-          <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-          <p><strong>Marca:</strong> {{ product.marca }}</p>
-          <p><strong>Preço:</strong> {{ product.preco }}</p>
-          <p><strong>Unidade de Medida:</strong> {{ product.unidade_de_medida }}</p>
-          <p><strong>Disponibilidade:</strong> {{ product.disponibilidade ? 'Disponível' : 'Indisponível' }}</p>
-          <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
-          <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
-          <div class="my-1">
-            <v-btn class="bg-primary mr-2" @click="addFavorite(product)">Favoritar</v-btn>
-            <v-btn class="bg-green" @click="navigateTo(`/products/${product.id}`)"
-            >vizualizar
-            </v-btn>
+          <div class="product-image py-6 px-2 justify-center">
+            <img :src="product.imagem" />
           </div>
-        </div>
+          <div class="product-info px-2 my-2">
+            <h3>{{ product.nome }}</h3>
+            <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+            <p><strong>Categoria:</strong> {{ product.categoria }}</p>
+            <p><strong>Marca:</strong> {{ product.marca }}</p>
+            <p><strong>Preço:</strong> {{ product.preco }}</p>
+            <p>
+              <strong>Unidade de Medida:</strong>
+              {{ product.unidade_de_medida }}
+            </p>
+            <p>
+              <strong>Disponibilidade:</strong>
+              {{ product.disponibilidade ? "Disponível" : "Indisponível" }}
+            </p>
+            <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
+            <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
+            <div class="my-1">
+              <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
+                >Favoritar</v-btn
+              >
+              <v-btn
+                class="bg-green"
+                @click="navigateTo(`/products/${product.id}`)"
+                >Detalhes
+              </v-btn>
+            </div>
+          </div>
         </v-card>
       </div>
     </div>
     <div class="pagination">
-      <span class="text-white mx-1">Página {{ currentPage }} de {{ totalPages }}</span>
+      <span class="text-white mx-1"
+        >Página {{ currentPage }} de {{ totalPages }}</span
+      >
       <button
-        @click="prevPage"
         :disabled="currentPage === 1"
         :class="{ 'enabled-button': currentPage > 1 }"
         class="mx-1 bt"
-      >Anterior</button>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
+        @click="prevPage"
+      >
+        Anterior
+      </button>
+      <button :disabled="currentPage === totalPages" @click="nextPage">
+        Próxima
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter();
 const navigateTo = (path) => {
   router.push(path);
-};
+}
 const products = ref([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(8); 
+const itemsPerPage = ref(8);
 
 async function fetchProducts() {
   try {
-    const response = await fetch('http://127.0.0.1:3000/produtos.json');
+    const response = await fetch("http://127.0.0.1:3000/produtos.json")
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    products.value = await response.json();
+    const data = await response.json();
+    const uniqueProducts = getLowestPricedProducts(data);
+    products.value = uniqueProducts;
   } catch (error) {
-    console.error('Erro ao buscar produtos:', error);
+    console.error("Erro ao buscar produtos:", error);
   }
+}
+
+function getLowestPricedProducts(products) {
+  const productMap = new Map();
+
+  products.forEach((product) => {
+    if (!productMap.has(product.nome)) {
+      productMap.set(product.nome, product);
+    } else {
+      const currentLowest = productMap.get(product.nome);
+      if (product.preco < currentLowest.preco) {
+        productMap.set(product.nome, product);
+      }
+    }
+  });
+
+  return Array.from(productMap.values());
 }
 
 async function addFavorite(product) {
   try {
-    const response = await fetch(`http://127.0.0.1:3000/favoritos/${product.id}/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+    const response = await fetch(
+      `http://127.0.0.1:3000/favoritos/${product.id}/add`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ id: product.id }),
       },
-      body: JSON.stringify({ id: product.id }),
-    });
-    
+    )
+
     if (!response.ok) {
-      throw new Error('Erro ao favoritar produto');
+      throw new Error("Erro ao favoritar produto")
     }
-    
+
     console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
   } catch (error) {
-    console.error('Erro ao favoritar produto:', error);
+    console.error("Erro ao favoritar produto:", error);
   }
 }
 
@@ -89,11 +131,11 @@ const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return products.value.slice(start, end);
-});
+})
 
 const totalPages = computed(() => {
   return Math.ceil(products.value.length / itemsPerPage.value);
-});
+})
 
 function prevPage() {
   if (currentPage.value > 1) {
@@ -118,15 +160,14 @@ fetchProducts();
   padding: 15px;
   border-radius: 8px;
   overflow-y: auto;
-  border: 2px solid #ACACAC;
+  border: 2px solid #acacac;
   margin-left: 10px;
   margin-right: 10px;
-
 }
 
 .product-details-container {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   justify-content: center;
   flex: 1;
 }
@@ -171,11 +212,11 @@ fetchProducts();
 }
 
 .bg-dark {
-  background-color: #ACACAC;
+  background-color: #acacac;
 }
 
 .enabled-button {
-  background-color: #da0707 !important; 
+  background-color: #da0707 !important;
 }
 
 .product-image {
@@ -189,19 +230,18 @@ fetchProducts();
 .product-card {
   margin-right: 20px;
   margin-bottom: 16px;
-  margin-top: 16px; 
-  min-width: 600px; 
+  margin-top: 16px;
+  min-width: 600px;
   height: auto;
   border-radius: 8px;
 }
 
 .product-info {
-  flex: 1; 
+  flex: 1;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   min-width: 400px;
   min-height: 280px;
-
 }
 .shape::-webkit-scrollbar {
   width: 8px;
