@@ -30,15 +30,15 @@
                 <p>
                   <strong>Nome do Mercado:</strong> {{ produto.nome_mercado }}
                 </p>
-                <h2 class="text-red">
+                <h2 class="text-red my-3">
                   <strong>Preço:</strong> {{ produto.preco }}
                 </h2>
                 <div class="mb-5">
-                  <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
-                    >Favoritar</v-btn
-                  >
+                  <v-btn class="bg-red mr-2" @click="removeFavorite(produto)">
+                    Remover
+                  </v-btn>
                   <v-btn class="bg-green mx-2">Rotas</v-btn>
-                  <v-btn class="bg-yellow mx-2">compartilhar</v-btn>
+                  <v-btn class="bg-yellow mx-2">Compartilhar</v-btn>
                 </div>
               </v-card-text>
             </v-card-title>
@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted } from "vue";
 
 const favoritos = ref([]);
 
@@ -80,9 +80,32 @@ async function getFavoritos() {
   }
 }
 
+async function removeFavorite(produto) {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:3000/favoritos/${produto.id}/remove`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.ok) {
+      // Update the favoritos list to remove the deleted product
+      favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
+    } else {
+      console.error("Erro ao remover favorito:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Erro ao remover favorito:", error);
+  }
+}
+
 onMounted(() => {
   getFavoritos();
-})
+});
 </script>
 
 <style scoped>
@@ -108,7 +131,7 @@ onMounted(() => {
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 600px;
-  height: 280px;
+  height: 300px;
   border-radius: 8px;
 }
 

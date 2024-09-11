@@ -105,7 +105,6 @@ async function fetchProduct() {
     const products = await response.json();
     product.value = products.find((p) => p.id === productId);
 
-    // Fetch similar products
     if (product.value) {
       similarProducts.value = products.filter(
         (p) =>

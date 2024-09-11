@@ -57,24 +57,53 @@
         Próxima
       </button>
     </div>
+
+    <!-- Snackbar -->
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+      location="top"
+      position="fixed"
+      :content-class="snackbarClass"
+    >
+      {{ snackbarText }}
+
+      <template #actions>
+        <v-btn color="white" variant="text" @click="snackbar = false">
+          X
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
-
 <script setup>
-import { ref, computed } from "vue"
-import { useRouter } from "vue-router"
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const navigateTo = (path) => {
   router.push(path);
-}
+};
+
 const products = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
+const snackbar = ref(false);
+const snackbarText = ref("");
+const timeout = ref(3000);
+const snackbarColor = ref("info");
+
+// Computed property to determine snackbar class
+const snackbarClass = computed(() => {
+  return {
+    "error-snackbar": snackbarColor.value === "error",
+    "success-snackbar": snackbarColor.value === "success",
+  };
+});
 
 async function fetchProducts() {
   try {
-    const response = await fetch("http://127.0.0.1:3000/produtos.json")
+    const response = await fetch("http://127.0.0.1:3000/produtos.json");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -115,15 +144,21 @@ async function addFavorite(product) {
         },
         body: JSON.stringify({ id: product.id }),
       },
-    )
+    );
 
     if (!response.ok) {
-      throw new Error("Erro ao favoritar produto")
+      throw new Error("Erro ao favoritar produto");
     }
 
-    console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
+    // Atualize o snackbar após adicionar aos favoritos
+    snackbarText.value = `Produto ${product.nome} adicionado aos favoritos com sucesso`;
+    snackbar.value = true;
+    snackbarColor.value = "success";
   } catch (error) {
     console.error("Erro ao favoritar produto:", error);
+    snackbarText.value = "Erro ao adicionar produto aos favoritos";
+    snackbar.value = true;
+    snackbarColor.value = "error";
   }
 }
 
@@ -131,11 +166,11 @@ const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return products.value.slice(start, end);
-})
+});
 
 const totalPages = computed(() => {
   return Math.ceil(products.value.length / itemsPerPage.value);
-})
+});
 
 function prevPage() {
   if (currentPage.value > 1) {
@@ -254,5 +289,15 @@ fetchProducts();
 
 .shape::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.error-snackbar {
+  background-color: red; /* Cor de fundo para erros */
+  color: white; /* Cor do texto para erros */
+}
+
+.success-snackbar {
+  background-color: green; /* Cor de fundo para sucesso */
+  color: white; /* Cor do texto para sucesso */
 }
 </style>
