@@ -10,13 +10,12 @@
       theme="light"
       variant="solo"
       auto-select-first
-      item-title="nome"
+      item-title="nome_produto"
       item-value="id"
       :items="uniqueProducts"
       rounded
     ></v-autocomplete>
 
-    <!-- Exibe uma imagem quando nenhum produto está selecionado -->
     <div v-if="!selectedProduct">
       <div class="justify-center align-center">
         <h2 class="text-center text-white">Faça sua pesquisa!</h2>
@@ -31,34 +30,21 @@
     <div v-if="selectedProduct && selectedProductData" class="d-flex">
       <v-card class="product-card d-flex">
         <div class="product-image pt-5 px-10 mt-5 justify-center">
-          <img :src="selectedProductData.imagem" class="image" />
+          <img :src="selectedProductData.image_url" class="image" />
         </div>
-        <div class="product-info px-2 my-2">
-          <h3>{{ selectedProductData.descricao }}</h3>
-          <p><strong>Descrição:</strong> {{ selectedProductData.descricao }}</p>
-          <p><strong>Categoria:</strong> {{ selectedProductData.categoria }}</p>
-          <p><strong>Marca:</strong> {{ selectedProductData.marca }}</p>
-          <p><strong>Preço:</strong> {{ selectedProductData.preco }}</p>
-          <p>
-            <strong>Unidade de Medida:</strong>
-            {{ selectedProductData.unidade_de_medida }}
-          </p>
-          <p>
-            <strong>Disponibilidade:</strong>
-            {{
-              selectedProductData.disponibilidade
-                ? "Disponível"
-                : "Indisponível"
-            }}
-          </p>
-          <p>
-            <strong>Avaliações:</strong> {{ selectedProductData.avaliacoes }}
-          </p>
-          <p>
-            <strong>Nome do Mercado:</strong>
-            {{ selectedProductData.nome_mercado }}
-          </p>
-          <div class="my-1">
+        <div
+          class="product-info px-2 my-2 d-flex flex-column justify-space-between"
+        >
+          <div>
+            <p class="my-2 text-h4">{{ selectedProductData.nome_produto }}</p>
+            <p class="mt-6 text-h6">
+              <strong>Categoria:</strong> {{ selectedProductData.categoria }}
+            </p>
+            <p class="my-7 text-red text-h5">
+              <strong>Preço:</strong> {{ selectedProductData.preco }}
+            </p>
+          </div>
+          <div class="mb-5">
             <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
               >Favoritar</v-btn
             >
@@ -72,33 +58,26 @@
       </v-card>
     </div>
 
+    <div class="my-3 text-white"><h2>Produtos Semalhantes</h2></div>
     <div v-if="selectedProduct && otherProducts.length">
       <v-card class="product-card px-5">
-        <h2 class="my-3">Outros produtos: {{ selectedProductData?.nome }}</h2>
         <div
           v-for="product in otherProducts"
           :key="product.id"
           class="other-product-item"
         >
           <div class="mt-5">
-            <img :src="product.imagem" class="product-image-small" />
+            <img :src="product.image_url" class="product-image-small" />
           </div>
           <v-divider color="white" class="mr-5 ml-10" vertical></v-divider>
           <div class="product-info-small">
-            <h4>{{ product.nome }}</h4>
-            <p><strong>Descrição:</strong> {{ product.descricao }}</p>
-            <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-            <p><strong>Marca:</strong> {{ product.marca }}</p>
-            <p><strong>Preço:</strong> {{ product.preco }}</p>
-            <p>
-              <strong>Unidade de Medida:</strong>
-              {{ product.unidade_de_medida }}
+            <p class="my-2 text-h5">{{ product.nome_produto }}</p>
+            <p class="text-h6">
+              <strong>Categoria:</strong> {{ product.categoria }}
             </p>
-            <p>
-              <strong>Disponibilidade:</strong>
-              {{ product.disponibilidade ? "Disponível" : "Indisponível" }}
+            <p class="my-3 text-red text-h6">
+              <strong>Preço:</strong> {{ product.preco }}
             </p>
-            <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
             <div class="my-2">
               <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
                 >Favoritar</v-btn
@@ -133,8 +112,8 @@ const otherProducts = ref([]);
 const uniqueProducts = computed(() => {
   const productMap = new Map();
   products.value.forEach((product) => {
-    if (!productMap.has(product.nome)) {
-      productMap.set(product.nome, product);
+    if (!productMap.has(product.nome_produto)) {
+      productMap.set(product.nome_produto, product);
     }
   });
   return Array.from(productMap.values());
@@ -157,9 +136,14 @@ watch(selectedProduct, (newValue) => {
     selectedProductData.value = products.value.find(
       (product) => product.id === newValue,
     );
-    const filteredProducts = products.value.filter(
-      (product) => product.nome === selectedProductData.value?.nome,
+
+    const selectedProductName = selectedProductData.value?.nome_produto
+      .toLowerCase()
+      .split(" ")[0];
+    const filteredProducts = products.value.filter((product) =>
+      product.nome_produto.toLowerCase().startsWith(selectedProductName),
     );
+
     const sortedProducts = filteredProducts.sort((a, b) => a.preco - b.preco);
     selectedProductData.value = sortedProducts[0];
     otherProducts.value = sortedProducts.slice(1);
@@ -209,6 +193,7 @@ fetchProducts();
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 700px;
+  max-width: 700px;
   height: auto;
   border-radius: 8px;
 }

@@ -8,34 +8,37 @@
         class="d-flex mt-2"
       >
         <v-card class="product-card d-flex">
-          <div class="product-image py-6 px-2 justify-center">
-            <img :src="product.imagem" />
+          <div class="product-image py-9 px-2 mx-2 justify-center">
+            <img :src="product.image_url" style="height: 170px; width: auto" />
           </div>
-          <div class="product-info px-2 my-2">
-            <h3>{{ product.nome }}</h3>
-            <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+          <div class="product-info px-2 mt-5">
+            <h4>{{ product.nome_produto }}</h4>
             <p><strong>Categoria:</strong> {{ product.categoria }}</p>
-            <p><strong>Marca:</strong> {{ product.marca }}</p>
-            <p><strong>Preço:</strong> {{ product.preco }}</p>
             <p>
-              <strong>Unidade de Medida:</strong>
-              {{ product.unidade_de_medida }}
+              <strong>Marca:</strong> {{ product.marca || "Não disponível" }}
             </p>
             <p>
               <strong>Disponibilidade:</strong>
               {{ product.disponibilidade ? "Disponível" : "Indisponível" }}
             </p>
-            <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
-            <p><strong>Nome do Mercado:</strong> {{ product.nome_mercado }}</p>
-            <div class="my-1">
+            <p>
+              <strong>Avaliações:</strong>
+              {{ product.avaliacoes || "Não disponível" }}
+            </p>
+            <p>
+              <strong>Nome do Mercado:</strong>
+              {{ product.nome_mercado || "Não disponível" }}
+            </p>
+            <p class="text-red my-2 text-h6">
+              <strong>Preço:</strong> {{ product.preco }}
+            </p>
+            <div class="mb-4 mt-auto">
               <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
                 >Favoritar</v-btn
               >
-              <v-btn
-                class="bg-green"
-                @click="navigateTo(`/products/${product.id}`)"
-                >Detalhes
-              </v-btn>
+              <v-btn class="bg-green" @click="navigateTo(product.link_to_item)"
+                >Detalhes</v-btn
+              >
             </div>
           </div>
         </v-card>
@@ -67,15 +70,14 @@
       {{ snackbarText }}
 
       <template #actions>
-        <v-btn color="white" variant="text" @click="snackbar = false">
-          X
-        </v-btn>
+        <v-btn color="white" variant="text" @click="snackbar = false">X</v-btn>
       </template>
     </v-snackbar>
   </div>
 </template>
+
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -91,10 +93,7 @@ const snackbarText = ref("");
 const timeout = ref(3000);
 const snackbarColor = ref("info");
 
-snackbarColor.value = "success"; // para sucesso
-snackbarColor.value = "error"; // para erro
-
-async function fetchProducts() {
+const fetchProducts = async () => {
   try {
     const response = await fetch("http://127.0.0.1:3000/produtos.json");
     if (!response.ok) {
@@ -106,26 +105,26 @@ async function fetchProducts() {
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
   }
-}
+};
 
-function getLowestPricedProducts(products) {
+const getLowestPricedProducts = (products) => {
   const productMap = new Map();
 
   products.forEach((product) => {
-    if (!productMap.has(product.nome)) {
-      productMap.set(product.nome, product);
+    if (!productMap.has(product.nome_produto)) {
+      productMap.set(product.nome_produto, product);
     } else {
-      const currentLowest = productMap.get(product.nome);
+      const currentLowest = productMap.get(product.nome_produto);
       if (product.preco < currentLowest.preco) {
-        productMap.set(product.nome, product);
+        productMap.set(product.nome_produto, product);
       }
     }
   });
 
   return Array.from(productMap.values());
-}
+};
 
-async function addFavorite(product) {
+const addFavorite = async (product) => {
   try {
     const response = await fetch(
       `http://127.0.0.1:3000/favoritos/${product.id}/add`,
@@ -143,7 +142,7 @@ async function addFavorite(product) {
       throw new Error("Erro ao favoritar produto");
     }
 
-    snackbarText.value = `Produto ${product.nome} adicionado aos favoritos com sucesso`;
+    snackbarText.value = `Produto ${product.nome_produto} adicionado aos favoritos com sucesso`;
     snackbar.value = true;
     snackbarColor.value = "success";
   } catch (error) {
@@ -152,7 +151,7 @@ async function addFavorite(product) {
     snackbar.value = true;
     snackbarColor.value = "red";
   }
-}
+};
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -164,21 +163,20 @@ const totalPages = computed(() => {
   return Math.ceil(products.value.length / itemsPerPage.value);
 });
 
-function prevPage() {
+const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
   }
-}
+};
 
-function nextPage() {
+const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
-}
+};
 
-fetchProducts();
+onMounted(fetchProducts);
 </script>
-
 <style scoped>
 .shape {
   display: flex;
@@ -244,14 +242,6 @@ fetchProducts();
 
 .enabled-button {
   background-color: #da0707 !important;
-}
-
-.product-image {
-  height: auto;
-  max-height: 200px;
-  width: 250px;
-  justify-content: center;
-  justify-items: center;
 }
 
 .product-card {
