@@ -52,6 +52,20 @@
         <img class="img" src="@/assets/favorites.png" alt="Logo" />
       </div>
     </div>
+
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="3000"
+      color="success"
+      location="top"
+    >
+      {{ snackbarMessage }}
+      <template #action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
+          Fechar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -59,6 +73,8 @@
 import { ref, onMounted } from "vue";
 
 const favoritos = ref([]);
+const snackbar = ref(false); // control visibility of snackbar
+const snackbarMessage = ref(""); // holds the snackbar message
 
 async function getFavoritos() {
   try {
@@ -95,6 +111,10 @@ async function removeFavorite(produto) {
     if (response.ok) {
       // Update the favoritos list to remove the deleted product
       favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
+
+      // Show success message in snackbar
+      snackbarMessage.value = `${produto.nome} foi removido dos favoritos.`;
+      snackbar.value = true;
     } else {
       console.error("Erro ao remover favorito:", response.statusText);
     }

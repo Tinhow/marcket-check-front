@@ -57,14 +57,12 @@
         Próxima
       </button>
     </div>
-
-    <!-- Snackbar -->
     <v-snackbar
       v-model="snackbar"
       :timeout="timeout"
       location="top"
       position="fixed"
-      :content-class="snackbarClass"
+      :color="snackbarColor"
     >
       {{ snackbarText }}
 
@@ -93,13 +91,8 @@ const snackbarText = ref("");
 const timeout = ref(3000);
 const snackbarColor = ref("info");
 
-// Computed property to determine snackbar class
-const snackbarClass = computed(() => {
-  return {
-    "error-snackbar": snackbarColor.value === "error",
-    "success-snackbar": snackbarColor.value === "success",
-  };
-});
+snackbarColor.value = "success"; // para sucesso
+snackbarColor.value = "error"; // para erro
 
 async function fetchProducts() {
   try {
@@ -150,7 +143,6 @@ async function addFavorite(product) {
       throw new Error("Erro ao favoritar produto");
     }
 
-    // Atualize o snackbar após adicionar aos favoritos
     snackbarText.value = `Produto ${product.nome} adicionado aos favoritos com sucesso`;
     snackbar.value = true;
     snackbarColor.value = "success";
@@ -158,7 +150,7 @@ async function addFavorite(product) {
     console.error("Erro ao favoritar produto:", error);
     snackbarText.value = "Erro ao adicionar produto aos favoritos";
     snackbar.value = true;
-    snackbarColor.value = "error";
+    snackbarColor.value = "red";
   }
 }
 
@@ -289,15 +281,5 @@ fetchProducts();
 
 .shape::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-
-.error-snackbar {
-  background-color: red; /* Cor de fundo para erros */
-  color: white; /* Cor do texto para erros */
-}
-
-.success-snackbar {
-  background-color: green; /* Cor de fundo para sucesso */
-  color: white; /* Cor do texto para sucesso */
 }
 </style>

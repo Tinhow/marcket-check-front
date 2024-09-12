@@ -16,6 +16,18 @@
       rounded
     ></v-autocomplete>
 
+    <!-- Exibe uma imagem quando nenhum produto está selecionado -->
+    <div v-if="!selectedProduct">
+      <div class="justify-center align-center">
+        <h2 class="text-center text-white">Faça sua pesquisa!</h2>
+        <img
+          src="@/assets/search.png"
+          alt="Nenhum produto selecionado"
+          class="img"
+        />
+      </div>
+    </div>
+
     <div v-if="selectedProduct && selectedProductData" class="d-flex">
       <v-card class="product-card d-flex">
         <div class="product-image pt-5 px-10 mt-5 justify-center">
@@ -53,7 +65,7 @@
             <v-btn
               class="bg-green"
               @click="navigateTo(`/products/${selectedProductData.id}`)"
-              >vizualizar</v-btn
+              >Visualizar</v-btn
             >
           </div>
         </div>
@@ -94,8 +106,8 @@
               <v-btn
                 class="bg-green"
                 @click="navigateTo(`/products/${product.id}`)"
-                >vizualizar
-              </v-btn>
+                >Visualizar</v-btn
+              >
             </div>
           </div>
         </div>
@@ -105,14 +117,14 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue"
-import { useRouter } from "vue-router"
+import { ref, watch, computed } from "vue";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const navigateTo = (path) => {
   router.push(path);
-}
+};
 const products = ref([]);
 const selectedProduct = ref(null);
 const selectedProductData = ref(null);
@@ -126,11 +138,11 @@ const uniqueProducts = computed(() => {
     }
   });
   return Array.from(productMap.values());
-})
+});
 
 async function fetchProducts() {
   try {
-    const response = await fetch("http://127.0.0.1:3000/produtos.json")
+    const response = await fetch("http://127.0.0.1:3000/produtos.json");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -147,7 +159,7 @@ watch(selectedProduct, (newValue) => {
     );
     const filteredProducts = products.value.filter(
       (product) => product.nome === selectedProductData.value?.nome,
-    )
+    );
     const sortedProducts = filteredProducts.sort((a, b) => a.preco - b.preco);
     selectedProductData.value = sortedProducts[0];
     otherProducts.value = sortedProducts.slice(1);
@@ -256,5 +268,13 @@ fetchProducts();
 
 .shape::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.img {
+  height: 400px !important;
+  width: auto !important;
+  border-radius: 8px;
+  background-color: transparent !important;
+  margin-bottom: 200px;
 }
 </style>
