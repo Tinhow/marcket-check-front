@@ -249,6 +249,7 @@ onMounted(fetchProducts);
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 600px;
+  max-width: 600px;
   height: auto;
   border-radius: 8px;
 }

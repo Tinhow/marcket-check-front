@@ -11,7 +11,7 @@
       >
         <v-card class="product-card d-flex">
           <div class="d-flex">
-            <v-img :src="produto.imagem" class="product-image my-10" />
+            <v-img :src="produto.image_url" class="product-image my-10" />
             <v-card-title class="d-flex flex-column p-0 m-0">
               <v-card-title>{{ produto.nome }}</v-card-title>
               <v-card-text>

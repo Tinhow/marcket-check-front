@@ -9,14 +9,13 @@
           <div class="product-details-container">
             <div class="product-image pt-5 px-10 mt-5 justify-center">
               <img
-                :src="product.imagem"
+                :src="product.image_url"
                 class="image"
                 alt="Imagem do produto"
               />
             </div>
             <div class="product-description">
-              <h2 class="my-3">{{ product.nome }}</h2>
-              <p><strong>Descrição:</strong> {{ product.descricao }}</p>
+              <h2 class="my-3">{{ product.nome_produto }}</h2>
               <p><strong>Categoria:</strong> {{ product.categoria }}</p>
               <p><strong>Marca:</strong> {{ product.marca }}</p>
               <p>
@@ -51,45 +50,12 @@
         <img class="not-found-image" src="@/assets/favorites.png" alt="Logo" />
       </div>
     </div>
-    
-    <div v-if="similarProducts.length" class="similar-products-container">
-      <h2 class="text-white">Produtos Semelhantes</h2>
-      <div class="similar-products">
-        <div v-for="item in similarProducts" :key="item.id">
-          <v-card class="product-card px-5">
-            <div class="product-info">
-              <div class="product-details-container pt-2 pb-10 px-10 mt-5 justify-center">
-                <div class="product-image ">
-                  <img :src="item.imagem" class="image" alt="Imagem do produto semelhante" />
-              </div>
-              <div class="product-description">
-                <h2 class="my-3">{{ item.nome }}</h2>
-                <p><strong>Descrição:</strong> {{ item.descricao }}</p>
-                <p><strong>Categoria:</strong> {{ item.categoria }}</p>
-                <p><strong>Disponibilidade:</strong> {{ item.disponibilidade ? "Disponível" : "Indisponível" }}</p>
-                <p><strong>Nome do Mercado:</strong> {{ item.nome_mercado }}</p>
-
-                <h2 class="text-red my-2">
-                <strong>Preço:</strong> {{ item.preco }}
-              </h2>
-                <div class="mb-5">
-                  <v-btn class="bg-primary" @click="addFavorite(item)">Favoritar</v-btn>
-                </div>
-              </div>
-              </div>
-            </div>
-          </v-card>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
-
-
 <script setup>
-import { ref, onMounted } from "vue"
-import { useRoute } from "vue-router"
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
 const product = ref(null);
 const route = useRoute();
@@ -107,8 +73,7 @@ async function fetchProduct() {
 
     if (product.value) {
       similarProducts.value = products.filter(
-        (p) =>
-          p.id !== productId && p.nome === product.value.nome
+        (p) => p.id !== productId && p.nome === product.value.nome,
       );
     }
   } catch (error) {
@@ -128,10 +93,10 @@ async function addFavorite(product) {
         },
         body: JSON.stringify({ id: product.id }),
       },
-    )
+    );
 
     if (!response.ok) {
-      throw new Error("Erro ao favoritar produto")
+      throw new Error("Erro ao favoritar produto");
     }
 
     console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
@@ -142,8 +107,7 @@ async function addFavorite(product) {
 
 onMounted(() => {
   fetchProduct();
-})
-
+});
 </script>
 
 <style scoped>
@@ -172,6 +136,7 @@ onMounted(() => {
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 700px;
+  max-width: 800px;
   height: auto;
   border-radius: 8px;
 }
@@ -222,6 +187,4 @@ onMounted(() => {
   height: 270px;
   width: 220px;
 }
-
-
 </style>
