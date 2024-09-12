@@ -10,38 +10,41 @@
         class="product-details d-flex mt-2"
       >
         <v-card class="product-card d-flex">
-          <div class="d-flex">
-            <v-img :src="produto.image_url" class="product-image my-10" />
-            <v-card-title class="d-flex flex-column p-0 m-0">
-              <v-card-title>{{ produto.nome }}</v-card-title>
-              <v-card-text>
-                <p><strong>Descrição:</strong> {{ produto.descricao }}</p>
-                <p><strong>Categoria:</strong> {{ produto.categoria }}</p>
-                <p><strong>Marca:</strong> {{ produto.marca }}</p>
-                <p>
-                  <strong>Unidade de Medida:</strong>
-                  {{ produto.unidade_de_medida }}
-                </p>
-                <p>
-                  <strong>Disponibilidade:</strong>
-                  {{ produto.disponibilidade ? "Disponível" : "Indisponível" }}
-                </p>
-                <p><strong>Avaliações:</strong> {{ produto.avaliacoes }}</p>
-                <p>
-                  <strong>Nome do Mercado:</strong> {{ produto.nome_mercado }}
-                </p>
-                <h2 class="text-red my-3">
-                  <strong>Preço:</strong> {{ produto.preco }}
-                </h2>
-                <div class="mb-5">
-                  <v-btn class="bg-red mr-2" @click="removeFavorite(produto)">
-                    Remover
-                  </v-btn>
-                  <v-btn class="bg-green mx-2">Rotas</v-btn>
-                  <v-btn class="bg-yellow mx-2">Compartilhar</v-btn>
-                </div>
-              </v-card-text>
-            </v-card-title>
+          <div class="product-image py-9 px-2 mx-2 justify-center">
+            <img :src="produto.image_url" style="height: 170px; width: auto" />
+          </div>
+          <div class="produto-info px-2 mt-5">
+            <p class="text-h6">{{ produto.nome_produto }}</p>
+            <p><strong>Categoria:</strong> {{ produto.categoria }}</p>
+            <p>
+              <strong>Marca:</strong> {{ produto.marca || "Não disponível" }}
+            </p>
+            <p>
+              <strong>Disponibilidade:</strong>
+              {{ produto.disponibilidade ? "Disponível" : "Indisponível" }}
+            </p>
+            <p>
+              <strong>Avaliações:</strong>
+              {{ produto.avaliacoes || "Não disponível" }}
+            </p>
+            <p>
+              <strong>Nome do Mercado:</strong>
+              {{ produto.nome_mercado || "Não disponível" }}
+            </p>
+            <p class="text-red my-2 text-h6">
+              <strong>Preço:</strong> {{ produto.preco }}
+            </p>
+            <div class="mb-4 mt-auto">
+              <v-btn class="bg-red mr-2" @click="removeFavorite(produto)"
+                >Remover</v-btn
+              >
+              <v-btn
+                class="bg-green mr-2"
+                @click="navigateTo(produto.link_to_item)"
+                >supermercado</v-btn
+              >
+              <v-btn class="bg-yellow">mapas</v-btn>
+            </div>
           </div>
         </v-card>
       </div>
@@ -108,8 +111,6 @@ async function removeFavorite(produto) {
 
     if (response.ok) {
       favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
-
-      // Show success message in snackbar
       snackbarMessage.value = `${produto.nome_produto} foi removido dos favoritos.`;
       snackbar.value = true;
     } else {
@@ -123,6 +124,14 @@ async function removeFavorite(produto) {
 onMounted(() => {
   getFavoritos();
 });
+
+const navigateTo = (link: string) => {
+  if (link) {
+    window.open(link, "_blank");
+  } else {
+    console.error("Link não fornecido");
+  }
+};
 </script>
 
 <style scoped>
@@ -148,8 +157,17 @@ onMounted(() => {
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 600px;
-  height: 300px;
+  max-width: 620px;
+  height: auto;
   border-radius: 8px;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  min-height: 280px;
 }
 
 .product-image {
@@ -162,7 +180,6 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  flex: 1;
 }
 
 .shape::-webkit-scrollbar {

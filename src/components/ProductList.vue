@@ -12,7 +12,7 @@
             <img :src="product.image_url" style="height: 170px; width: auto" />
           </div>
           <div class="product-info px-2 mt-5">
-            <h4>{{ product.nome_produto }}</h4>
+            <p class="text-h6">{{ product.nome_produto }}</p>
             <p><strong>Categoria:</strong> {{ product.categoria }}</p>
             <p>
               <strong>Marca:</strong> {{ product.marca || "Não disponível" }}
@@ -36,8 +36,10 @@
               <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
                 >Favoritar</v-btn
               >
-              <v-btn class="bg-green" @click="navigateTo(product.link_to_item)"
-                >Detalhes</v-btn
+              <v-btn
+                class="bg-green"
+                @click="navigateTo(`/products/${product.id}`)"
+                >Visualizar</v-btn
               >
             </div>
           </div>

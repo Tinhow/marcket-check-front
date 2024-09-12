@@ -7,7 +7,7 @@
       <v-card class="product-card px-5">
         <div class="product-info">
           <div class="product-details-container">
-            <div class="product-image pt-5 px-10 mt-5 justify-center">
+            <div class="product-image pt-2 px-5 mt-3 justify-center">
               <img
                 :src="product.image_url"
                 class="image"
@@ -37,7 +37,12 @@
                 <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
                   >Favoritar</v-btn
                 >
-                <v-btn class="bg-green mx-2">Rotas</v-btn>
+                <v-btn
+                  class="bg-green mx-2"
+                  @click="navigateTo(product.link_to_item)"
+                >
+                  supermercado
+                </v-btn>
               </div>
             </div>
           </div>
@@ -50,6 +55,19 @@
         <img class="not-found-image" src="@/assets/favorites.png" alt="Logo" />
       </div>
     </div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+      location="top"
+      position="fixed"
+      :color="snackbarColor"
+    >
+      {{ snackbarText }}
+
+      <template #actions>
+        <v-btn color="white" variant="text" @click="snackbar = false">X</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -61,6 +79,10 @@ const product = ref(null);
 const route = useRoute();
 const productId = Number(route.params.id);
 const similarProducts = ref([]);
+const snackbar = ref(false);
+const snackbarText = ref("");
+const timeout = ref(3000);
+const snackbarColor = ref("info");
 
 async function fetchProduct() {
   try {
@@ -81,7 +103,7 @@ async function fetchProduct() {
   }
 }
 
-async function addFavorite(product) {
+const addFavorite = async (product) => {
   try {
     const response = await fetch(
       `http://127.0.0.1:3000/favoritos/${product.id}/add`,
@@ -99,15 +121,28 @@ async function addFavorite(product) {
       throw new Error("Erro ao favoritar produto");
     }
 
-    console.log(`Produto ${product.nome} adicionado aos favoritos com sucesso`);
+    snackbarText.value = `Produto ${product.nome_produto} adicionado aos favoritos com sucesso`;
+    snackbar.value = true;
+    snackbarColor.value = "success";
   } catch (error) {
     console.error("Erro ao favoritar produto:", error);
+    snackbarText.value = "Erro ao adicionar produto aos favoritos";
+    snackbar.value = true;
+    snackbarColor.value = "red";
   }
-}
+};
 
 onMounted(() => {
   fetchProduct();
 });
+
+const navigateTo = (link) => {
+  if (link) {
+    window.open(link, "_blank");
+  } else {
+    console.error("Link não fornecido");
+  }
+};
 </script>
 
 <style scoped>
