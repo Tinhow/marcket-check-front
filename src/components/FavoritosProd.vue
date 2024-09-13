@@ -43,7 +43,7 @@
                 @click="navigateTo(produto.link_to_item)"
                 >supermercado</v-btn
               >
-              <v-btn class="bg-yellow mt-2">mapas</v-btn>
+              <v-btn class="bg-yellow mt-2">mapa</v-btn>
             </div>
           </div>
         </v-card>
@@ -157,7 +157,7 @@ const navigateTo = (link: string) => {
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 600px;
-  max-width: 650px;
+  max-width: 700px;
   height: auto;
   border-radius: 8px;
 }
