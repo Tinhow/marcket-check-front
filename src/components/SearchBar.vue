@@ -45,9 +45,12 @@
             </p>
           </div>
           <div class="mb-5">
-            <v-btn class="bg-primary mr-2" @click="addFavorite(product)"
+            <v-btn
+              class="bg-primary mr-2"
+              @click="addFavorite(selectedProductData)"
               >Favoritar</v-btn
             >
+
             <v-btn
               class="bg-green"
               @click="navigateTo(`/products/${selectedProductData.id}`)"
@@ -92,6 +95,19 @@
         </div>
       </v-card>
     </div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+      location="top"
+      position="fixed"
+      :color="snackbarColor"
+    >
+      {{ snackbarText }}
+
+      <template #actions>
+        <v-btn color="white" variant="text" @click="snackbar = false">X</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -108,7 +124,10 @@ const products = ref([]);
 const selectedProduct = ref(null);
 const selectedProductData = ref(null);
 const otherProducts = ref([]);
-
+const snackbar = ref(false);
+const snackbarText = ref("");
+const timeout = ref(3000);
+const snackbarColor = ref("info");
 const uniqueProducts = computed(() => {
   const productMap = new Map();
   products.value.forEach((product) => {
@@ -130,6 +149,35 @@ async function fetchProducts() {
     console.error("Erro ao buscar produtos:", error);
   }
 }
+
+const addFavorite = async (product) => {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:3000/favoritos/${product.id}/add`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ id: product.id }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Erro ao favoritar produto");
+    }
+
+    snackbarText.value = `Produto ${product.nome_produto} adicionado aos favoritos com sucesso`;
+    snackbar.value = true;
+    snackbarColor.value = "success";
+  } catch (error) {
+    console.error("Erro ao favoritar produto:", error);
+    snackbarText.value = "Erro ao adicionar produto aos favoritos";
+    snackbar.value = true;
+    snackbarColor.value = "red";
+  }
+};
 
 watch(selectedProduct, (newValue) => {
   if (newValue !== null) {
