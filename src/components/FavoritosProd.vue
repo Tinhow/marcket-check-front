@@ -35,15 +35,15 @@
               <strong>Preço:</strong> {{ produto.preco }}
             </p>
             <div class="mb-4 mt-auto">
-              <v-btn class="bg-red mr-2" @click="removeFavorite(produto)"
+              <v-btn class="bg-red mr-2 mt-2" @click="removeFavorite(produto)"
                 >Remover</v-btn
               >
               <v-btn
-                class="bg-green mr-2"
+                class="bg-green mr-2 mt-2"
                 @click="navigateTo(produto.link_to_item)"
                 >supermercado</v-btn
               >
-              <v-btn class="bg-yellow">mapas</v-btn>
+              <v-btn class="bg-yellow mt-2">mapas</v-btn>
             </div>
           </div>
         </v-card>
@@ -157,7 +157,7 @@ const navigateTo = (link: string) => {
   margin-bottom: 16px;
   margin-top: 16px;
   min-width: 600px;
-  max-width: 620px;
+  max-width: 650px;
   height: auto;
   border-radius: 8px;
 }
