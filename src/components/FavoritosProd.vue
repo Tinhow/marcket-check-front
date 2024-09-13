@@ -43,7 +43,7 @@
                 @click="navigateTo(produto.link_to_item)"
                 >supermercado</v-btn
               >
-              <v-btn class="bg-yellow">mapas</v-btn>
+              <!-- <v-btn class="bg-yellow">mapas</v-btn> -->
             </div>
           </div>
         </v-card>
