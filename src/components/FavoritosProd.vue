@@ -156,7 +156,7 @@ const navigateTo = (link: string) => {
   margin-right: 20px;
   margin-bottom: 16px;
   margin-top: 16px;
-  min-width: 600px;
+  min-width: 700px;
   max-width: 700px;
   height: auto;
   border-radius: 8px;
