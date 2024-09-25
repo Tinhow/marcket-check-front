@@ -27,7 +27,7 @@
             </p>
             <p>
               <strong>Nome do Mercado:</strong>
-              {{ product.nome_mercado || "Não disponível" }}
+              {{ product.supermercado.nome_mercado || "Não disponível" }}
             </p>
             <p class="text-red my-2 text-h6">
               <strong>Preço:</strong> {{ product.preco }}
