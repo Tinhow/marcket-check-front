@@ -70,6 +70,22 @@
           <p>FAVORITOS</p>
         </router-link>
       </v-hover>
+      <v-divider class="link mr-4" inset vertical />
+      <v-hover v-slot="{ isHovering, props }">
+        <router-link
+          class="link mr-3"
+          to="/login"
+          v-bind="props"
+          :style="{
+            backgroundColor: isHovering ? '#007bff' : 'transparent',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            color: isHovering ? 'white' : '#007bff',
+          }"
+        >
+          <p>LOGIN</p>
+        </router-link>
+      </v-hover>
     </div>
   </header>
 </template>
