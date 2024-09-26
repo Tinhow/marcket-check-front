@@ -1,37 +1,73 @@
 <template>
   <div class="bg-dark p-2 shape">
     <div class="div1">
-      <img class="img" src="@/assets/login.svg
-      " alt="Logo" />
+      <img class="img" src="@/assets/login.svg" alt="Logo" />
     </div>
-    <div class="div2 d-flex flex-column">
+    <div class="div2 d-flex flex-column justify-center align-center">
       <div>
-        <div cols="12"> 
-          <h1>Login</h1>
-          <h3 class="mb-7 text-white">Faça o Login com sua conta</h3>
-        </div>
+        <h1>Login</h1>
+        <h3 class="mb-7 text-white form">Faça o Login com sua conta</h3>
       </div>
-      <div>
-        <v-text-field 
-        label="Email" 
-        variant="outlined"
-        base-color="black"
-        bg-color="white"
+      <form @submit.prevent="login">
+        <v-text-field
+          v-model="email"
+          class="form"
+          label="Email"
+          variant="outlined"
+          base-color="black"
+          bg-color="white"
+          type="email"
+          required
         ></v-text-field>
-        <v-text-field 
-        label="Senha"
-        variant="outlined"
-        base-color="black"
-        bg-color="white">
-        </v-text-field>
-        <p>Não possui uma conta? <router-link to="/register">Registre-se</router-link></p>
-        <router-view></router-view>
-      </div>
+        <v-text-field
+          v-model="password"
+          label="Senha"
+          variant="outlined"
+          base-color="black"
+          bg-color="white"
+          type="password"
+          required
+        ></v-text-field>
+        <v-btn type="submit" color="white" class="mt-4">Login</v-btn>
+      </form>
+      <p class="mt-4 text-white">
+        Não possui uma conta?
+        <router-link to="/register" class="text-white">Registre-se</router-link>
+      </p>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref } from "vue";
+import axios from "axios"; // Importar axios para requisições HTTP
+import { useRouter } from "vue-router";
+
+const email = ref("");
+const password = ref("");
+const error = ref("");
+
+const router = useRouter();
+
+const login = async () => {
+  try {
+    const response = await axios.post("http://127.0.0.1:3000/users/sign_in", {
+      user: {
+        email: email.value,
+        password: password.value,
+      },
+    });
+
+    // Se a autenticação for bem-sucedida, redireciona para a página inicial
+    if (response.status === 200) {
+      router.push("/");
+    }
+  } catch (err) {
+    error.value = "Falha ao autenticar. Verifique suas credenciais."; // Exibir mensagem de erro
+    console.error(err);
+  }
+};
+</script>
 
 <style scoped>
 .shape {
@@ -43,20 +79,21 @@
 }
 
 .div1 {
-  height: 100% !important;
-  width: 70% !important;
+  height: 100%;
+  width: 70%;
   justify-content: center;
   align-items: center;
   display: flex;
 }
 
 .div2 {
-  height: 100% !important;
-  width: 30% !important;
+  height: 100%;
+  width: 30%;
   justify-content: center;
   align-items: center;
   background-color: #007bff;
   display: flex;
+  flex-direction: column;
 }
 
 .bg-dark {
@@ -64,7 +101,7 @@
 }
 
 h1,
-h2,
+h3,
 p {
   color: #fff;
 }
@@ -74,9 +111,12 @@ p {
 }
 
 .img {
-  height: 100% !important;
-  width: auto !important;
+  height: 100%;
+  width: auto;
   border-radius: 8px;
   background-color: transparent !important;
+}
+.form {
+  width: 217px !important;
 }
 </style>

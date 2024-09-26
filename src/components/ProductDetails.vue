@@ -28,7 +28,8 @@
               </p>
               <p><strong>Avaliações:</strong> {{ product.avaliacoes }}</p>
               <p>
-                <strong>Nome do Mercado:</strong> {{ product.supermercado.nome_mercado }}
+                <strong>Nome do Mercado:</strong>
+                {{ product.supermercado.nome_mercado }}
               </p>
               <h2 class="text-red my-2">
                 <strong>Preço:</strong> {{ product.preco }}
@@ -44,8 +45,11 @@
                   supermercado
                 </v-btn>
 
-                <v-btn class="bg-yellow"
-                @click="navigateTo(product.supermercado.localizacao)">mapas</v-btn>
+                <v-btn
+                  class="bg-yellow"
+                  @click="navigateTo(product.supermercado.localizacao)"
+                  >mapas</v-btn
+                >
               </div>
             </div>
           </div>

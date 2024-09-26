@@ -1,46 +1,81 @@
 <template>
   <div class="bg-dark p-2 shape">
     <div class="div1">
-      <img class="img" src="@/assets/login.svg
-      " alt="Logo" />
+      <img class="img" src="@/assets/login.svg" alt="Logo" />
     </div>
     <div class="div2 d-flex flex-column">
       <div>
-        <div cols="12"> 
+        <div cols="12">
           <h1>Registro</h1>
-          <h3 class="mb-7 text-white">Faça o Login com sua conta!</h3>
+          <h3 class="mb-7 text-white">Faça o Registro com sua conta!</h3>
         </div>
       </div>
       <div>
-        <v-text-field 
-        label="Email" 
-        variant="outlined"
-        base-color="black"
-        bg-color="white"
-        v-model="email"
+        <v-text-field
+          v-model="email"
+          label="Email"
+          variant="outlined"
+          base-color="black"
+          bg-color="white"
+          required
         ></v-text-field>
-        <v-text-field 
-        label="Senha"
-        variant="outlined"
-        base-color="black"
-        bg-color="white"
-        v-model="password">
-        </v-text-field>
-        <v-text-field 
-        label="Senha"
-        variant="outlined"
-        base-color="black"
-        bg-color="white"
-        v-model="password">
-        </v-text-field>
-        <p>Possui uma conta? <router-link to="/login">Faça Login</router-link></p>
+        <v-text-field
+          v-model="password"
+          label="Senha"
+          type="password"
+          variant="outlined"
+          base-color="black"
+          bg-color="white"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="passwordConfirmation"
+          label="Confirme a Senha"
+          type="password"
+          variant="outlined"
+          base-color="black"
+          bg-color="white"
+          required
+        ></v-text-field>
+        <v-btn class="bg-white" @click="registerUser">Registrar</v-btn>
+        <p>
+          Possui uma conta? <router-link to="/login">Faça Login</router-link>
+        </p>
         <router-view></router-view>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+
+const email = ref("");
+const password = ref("");
+const passwordConfirmation = ref("");
+
+const router = useRouter();
+
+const registerUser = async () => {
+  try {
+    const response = await axios.post("http://127.0.0.1:3000/users", {
+      user: {
+        email: email.value,
+        password: password.value,
+        password_confirmation: passwordConfirmation.value,
+      },
+    });
+
+    if (response.status === 200) {
+      router.push("/login");
+    }
+  } catch (error) {
+    console.error("Erro ao registrar o usuário:", error);
+  }
+};
+</script>
 
 <style scoped>
 .shape {
@@ -73,7 +108,7 @@
 }
 
 h1,
-h2,
+h3,
 p {
   color: #fff;
 }

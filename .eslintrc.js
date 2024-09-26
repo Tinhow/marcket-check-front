@@ -10,11 +10,17 @@ module.exports = {
   parserOptions: {
     parser: "@typescript-eslint/parser",
   },
-  extends: ["@nuxtjs/eslint-config-typescript", "plugin:Prettier ESLint/recommended"],
+  extends: ["@nuxtjs/eslint-config-typescript", "plugin:prettier/recommended"],
   plugins: [],
   rules: {
     semi: ["error", "always"],
     "arrow-parens": ["error", "always"],
     quotes: ["error", "double"],
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto", // Adiciona essa configuração
+      },
+    ],
   },
 };
