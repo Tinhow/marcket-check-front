@@ -54,6 +54,7 @@
           <p>PRODUTOS</p>
         </router-link>
       </v-hover>
+
       <v-divider class="link mr-4" inset vertical />
       <v-hover v-slot="{ isHovering, props }">
         <router-link
@@ -71,7 +72,7 @@
         </router-link>
       </v-hover>
       <v-divider class="link mr-4" inset vertical />
-      <v-hover v-slot="{ isHovering, props }">
+      <v-hover v-if="!authStore.isAuthenticated" v-slot="{ isHovering, props }">
         <router-link
           class="link mr-3"
           to="/login"
@@ -86,11 +87,34 @@
           <p>LOGIN</p>
         </router-link>
       </v-hover>
+      <v-hover v-else v-slot="{ isHovering, props }">
+        <a
+          href="#"
+          class="link mr-3"
+          v-bind="props"
+          :style="{
+            backgroundColor: isHovering ? '#007bff' : 'transparent',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            color: isHovering ? 'white' : '#007bff',
+          }"
+          @click="logout"
+        >
+          <p>LOGOUT</p>
+        </a>
+      </v-hover>
     </div>
   </header>
 </template>
 
-<script setup></script>
+<script setup>
+import { useAuthStore } from "@/store/auth";
+const authStore = useAuthStore();
+
+const logout = () => {
+  authStore.logout();
+};
+</script>
 
 <style scoped>
 header {

@@ -40,14 +40,16 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import axios from "axios"; // Importar axios para requisições HTTP
+import axios from "axios";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
 
 const email = ref("");
 const password = ref("");
 const error = ref("");
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const login = async () => {
   try {
@@ -58,15 +60,20 @@ const login = async () => {
       },
     });
 
-    // Se a autenticação for bem-sucedida, redireciona para a página inicial
+    // Se a autenticação for bem-sucedida, salva o token e redireciona
     if (response.status === 200) {
+      const token = response.data.token; // Supondo que o token venha nesta estrutura
+      authStore.login(token); // Passando o token para o método de login
       router.push("/");
+    } else {
+      throw new Error("Autenticação falhou. Sem token.");
     }
   } catch (err) {
-    error.value = "Falha ao autenticar. Verifique suas credenciais."; // Exibir mensagem de erro
-    console.error(err);
+    error.value = "Falha ao autenticar. Verifique suas credenciais.";
+    console.error("Erro de autenticação:", err.message || err);
   }
 };
+
 </script>
 
 <style scoped>
