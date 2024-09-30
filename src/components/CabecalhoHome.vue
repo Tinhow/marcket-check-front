@@ -71,6 +71,24 @@
           <p>FAVORITOS</p>
         </router-link>
       </v-hover>
+
+      <v-divider class="link mr-4" inset vertical />
+      <v-hover v-slot="{ isHovering, props }">
+        <router-link
+          class="link mr-3"
+          to="/cart"
+          v-bind="props"
+          :style="{
+            backgroundColor: isHovering ? '#007bff' : 'transparent',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            color: isHovering ? 'white' : '#007bff',
+          }"
+        >
+          <p>CARRINHO</p>
+        </router-link>
+      </v-hover>
+
       <v-divider class="link mr-4" inset vertical />
       <v-hover v-if="!authStore.isAuthenticated" v-slot="{ isHovering, props }">
         <router-link

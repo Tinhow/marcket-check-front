@@ -15,17 +15,6 @@
             <p class="text-h6">{{ product.nome_produto }}</p>
             <p><strong>Categoria:</strong> {{ product.categoria }}</p>
             <p>
-              <strong>Marca:</strong> {{ product.marca || "Não disponível" }}
-            </p>
-            <p>
-              <strong>Disponibilidade:</strong>
-              {{ product.disponibilidade ? "Disponível" : "Indisponível" }}
-            </p>
-            <p>
-              <strong>Avaliações:</strong>
-              {{ product.avaliacoes || "Não disponível" }}
-            </p>
-            <p>
               <strong>Nome do Mercado:</strong>
               {{ product.supermercado.nome_mercado || "Não disponível" }}
             </p>
@@ -78,30 +67,28 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import api, { Product } from "@/services/api";
 
 const router = useRouter();
-const navigateTo = (path) => {
+const navigateTo = (path: string) => {
   router.push(path);
 };
 
-const products = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = ref(8);
-const snackbar = ref(false);
-const snackbarText = ref("");
-const timeout = ref(3000);
-const snackbarColor = ref("info");
+const products = ref<Product[]>([]);
+const currentPage = ref<number>(1);
+const itemsPerPage = ref<number>(8);
+const snackbar = ref<boolean>(false);
+const snackbarText = ref<string>("");
+const timeout = ref<number>(3000);
+const snackbarColor = ref<string>("info");
 
-const fetchProducts = async () => {
+const fetchProducts = async (): Promise<void> => {
   try {
-    const response = await fetch("http://127.0.0.1:3000/produtos.json");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
+    const response = await api.get<Product[]>("/produtos.json");
+    const data = response.data;
     const uniqueProducts = getLowestPricedProducts(data);
     products.value = uniqueProducts;
   } catch (error) {
@@ -109,16 +96,17 @@ const fetchProducts = async () => {
   }
 };
 
-const getLowestPricedProducts = (products) => {
-  const productMap = new Map();
+const getLowestPricedProducts = (productList: Product[]): Product[] => {
+  const productMap = new Map<string, Product>();
 
-  products.forEach((product) => {
-    if (!productMap.has(product.nome_produto)) {
-      productMap.set(product.nome_produto, product);
+  productList.forEach((product) => {
+    const productName = product.nome_produto;
+    if (!productMap.has(productName)) {
+      productMap.set(productName, product);
     } else {
-      const currentLowest = productMap.get(product.nome_produto);
+      const currentLowest = productMap.get(productName)!;
       if (product.preco < currentLowest.preco) {
-        productMap.set(product.nome_produto, product);
+        productMap.set(productName, product);
       }
     }
   });
@@ -126,21 +114,13 @@ const getLowestPricedProducts = (products) => {
   return Array.from(productMap.values());
 };
 
-const addFavorite = async (product) => {
+const addFavorite = async (product: Product): Promise<void> => {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:3000/favoritos/${product.id}/add`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ id: product.id }),
-      },
-    );
+    const response = await api.post(`/favoritos/${product.id}/add`, {
+      id: product.id,
+    });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error("Erro ao favoritar produto");
     }
 
@@ -165,13 +145,13 @@ const totalPages = computed(() => {
   return Math.ceil(products.value.length / itemsPerPage.value);
 });
 
-const prevPage = () => {
+const prevPage = (): void => {
   if (currentPage.value > 1) {
     currentPage.value--;
   }
 };
 
-const nextPage = () => {
+const nextPage = (): void => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
@@ -179,6 +159,7 @@ const nextPage = () => {
 
 onMounted(fetchProducts);
 </script>
+
 <style scoped>
 .shape {
   display: flex;

@@ -5,7 +5,8 @@ import ProductListPage from "@/pages/products/ProductListPage.vue";
 import FavoritosPage from "@/pages/FavoritosPage.vue";
 import ProductId from "@/pages/products/[id].vue";
 import LoginPage from "@/pages/login/LoginPage.vue";
-import RegisterPage from "@/components/Login/RegisterPage.vue";
+import RegisterPage from "@/pages/login/RegisterPage.vue";
+import CarrinhoList from "@/pages/CarrinhoPage.vue";
 
 const routes = [
   { path: "/", component: HomePage },
@@ -15,6 +16,7 @@ const routes = [
   { path: "/products/:id", component: ProductId },
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
+  { path: "/cart", component: CarrinhoList },
 ];
 
 const router = createRouter({

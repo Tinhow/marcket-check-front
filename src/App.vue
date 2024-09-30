@@ -8,17 +8,15 @@
 
 <script setup>
 import { onMounted } from "vue";
-import { useAuthStore } from "@/store/auth"; // Importe a store de autenticação
+import { useAuthStore } from "@/store/auth";
 
 import cabecalhoHome from "@/components/CabecalhoHome.vue";
 import rodaPe from "@/components/RodaPe.vue";
 const authStore = useAuthStore();
 
-// Verifique a autenticação ao montar o componente
 onMounted(() => {
   authStore.checkAuth();
 
-  // Se não estiver autenticado, redirecione para a página de login
   if (!authStore.isAuthenticated) {
     console.log("Usuário não autenticado");
   } else {

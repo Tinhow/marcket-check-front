@@ -50,7 +50,6 @@
               @click="addFavorite(selectedProductData)"
               >Favoritar</v-btn
             >
-
             <v-btn
               class="bg-green"
               @click="navigateTo(`/products/${selectedProductData.id}`)"
@@ -95,6 +94,7 @@
         </div>
       </v-card>
     </div>
+
     <v-snackbar
       v-model="snackbar"
       :timeout="timeout"
@@ -103,7 +103,6 @@
       :color="snackbarColor"
     >
       {{ snackbarText }}
-
       <template #actions>
         <v-btn color="white" variant="text" @click="snackbar = false">X</v-btn>
       </template>
@@ -111,25 +110,28 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+import api, { Product } from "@/services/api"; // Importando o Axios configurado
 
 const router = useRouter();
 
-const navigateTo = (path) => {
+const navigateTo = (path: string) => {
   router.push(path);
 };
-const products = ref([]);
-const selectedProduct = ref(null);
-const selectedProductData = ref(null);
-const otherProducts = ref([]);
-const snackbar = ref(false);
-const snackbarText = ref("");
-const timeout = ref(3000);
-const snackbarColor = ref("info");
+
+const products = ref<Product[]>([]);
+const selectedProduct = ref<number | null>(null);
+const selectedProductData = ref<Product | null>(null);
+const otherProducts = ref<Product[]>([]);
+const snackbar = ref<boolean>(false);
+const snackbarText = ref<string>("");
+const timeout = ref<number>(3000);
+const snackbarColor = ref<string>("info");
+
 const uniqueProducts = computed(() => {
-  const productMap = new Map();
+  const productMap = new Map<string, Product>();
   products.value.forEach((product) => {
     if (!productMap.has(product.nome_produto)) {
       productMap.set(product.nome_produto, product);
@@ -138,33 +140,22 @@ const uniqueProducts = computed(() => {
   return Array.from(productMap.values());
 });
 
-async function fetchProducts() {
+const fetchProducts = async () => {
   try {
-    const response = await fetch("http://127.0.0.1:3000/produtos.json");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    products.value = await response.json();
+    const response = await api.get<Product[]>("/produtos.json"); // Usando Axios
+    products.value = response.data;
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
   }
-}
+};
 
-const addFavorite = async (product) => {
+const addFavorite = async (product: Product) => {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:3000/favoritos/${product.id}/add`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ id: product.id }),
-      },
-    );
+    const response = await api.post(`/favoritos/${product.id}/add`, {
+      id: product.id,
+    });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error("Erro ao favoritar produto");
     }
 
@@ -201,9 +192,9 @@ watch(selectedProduct, (newValue) => {
   }
 });
 
+// Chama a função para buscar os produtos ao iniciar o componente
 fetchProducts();
 </script>
-
 <style scoped>
 .shape {
   border-radius: 8px;

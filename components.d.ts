@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BoddyHome: typeof import('./src/components/BoddyHome.vue')['default']
     CabecalhoHome: typeof import('./src/components/CabecalhoHome.vue')['default']
+    CarrinhoList: typeof import('./src/components/CarrinhoList.vue')['default']
     FavoritosProd: typeof import('./src/components/FavoritosProd.vue')['default']
     LoginPage: typeof import('./src/components/login/LoginPage.vue')['default']
     ProductDetails: typeof import('./src/components/ProductDetails.vue')['default']
