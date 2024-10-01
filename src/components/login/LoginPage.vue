@@ -30,6 +30,7 @@
         ></v-text-field>
         <v-btn type="submit" color="white" class="mt-4">Login</v-btn>
       </form>
+      <p v-if="error" class="mt-4 text-danger">{{ error }}</p>
       <p class="mt-4 text-white">
         Não possui uma conta?
         <router-link to="/register" class="text-white">Registre-se</router-link>
@@ -59,12 +60,13 @@ const login = async () => {
         password: password.value,
       },
     });
-
+    console.log("Resposta da API:", response.data);
     // Se a autenticação for bem-sucedida, salva o token e redireciona
     if (response.status === 200) {
       const token = response.data.token; // Supondo que o token venha nesta estrutura
+      console.log("Token JWT:", token); // Exibe o token no console
       authStore.login(token); // Passando o token para o método de login
-      router.push("/");
+      router.push("/"); // Redireciona para a página inicial após o login
     } else {
       throw new Error("Autenticação falhou. Sem token.");
     }
@@ -73,7 +75,6 @@ const login = async () => {
     console.error("Erro de autenticação:", err.message || err);
   }
 };
-
 </script>
 
 <style scoped>
