@@ -69,7 +69,6 @@ const snackbarColor = ref("info");
 
 const router = useRouter();
 const authStore = useAuthStore();
-
 const login = async () => {
   try {
     const response = await axios.post("http://127.0.0.1:3000/users/sign_in", {
@@ -84,8 +83,8 @@ const login = async () => {
       snackbar.value = true;
       snackbarColor.value = "green";
       const token = response.data.token;
-      console.log("Token JWT:", token);
-      authStore.login(token);
+      const user = response.data.user;
+      authStore.login(token, user);
       setTimeout(() => {
         router.push("/");
       }, 2000);

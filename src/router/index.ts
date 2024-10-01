@@ -7,6 +7,7 @@ import ProductId from "@/pages/products/[id].vue";
 import LoginPage from "@/pages/login/LoginPage.vue";
 import RegisterPage from "@/pages/login/RegisterPage.vue";
 import CarrinhoList from "@/pages/CarrinhoPage.vue";
+import { useAuthStore } from "@/store/auth"; // Import the auth store
 
 const routes = [
   { path: "/", component: HomePage },
@@ -16,7 +17,7 @@ const routes = [
   { path: "/products/:id", component: ProductId },
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
-  { path: "/cart", component: CarrinhoList },
+  { path: "/cart", component: CarrinhoList, meta: { requiresAuth: true } }, // Add meta for auth requirement
 ];
 
 const router = createRouter({
@@ -24,7 +25,21 @@ const router = createRouter({
   routes,
 });
 
-// Workaround for https://github.com/vitejs/vite/issues/11804
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!authStore.isAuthenticated) {
+      next({ path: "/login" });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+// Workaround for dynamic import error
 router.onError((err, to) => {
   if (err?.message?.includes?.("Failed to fetch dynamically imported module")) {
     if (!localStorage.getItem("vuetify:dynamic-reload")) {

@@ -71,7 +71,6 @@
           <p>FAVORITOS</p>
         </router-link>
       </v-hover>
-      <!-- Conditionally show the cart link -->
       <v-hover v-if="authStore.isAuthenticated" v-slot="{ isHovering, props }">
         <v-divider class="link mr-4" inset vertical />
 
@@ -117,7 +116,7 @@
             padding: '5px 10px',
             color: isHovering ? 'white' : '#007bff',
           }"
-          @click="logout"
+          @click="logout()"
         >
           <p>LOGOUT</p>
         </a>

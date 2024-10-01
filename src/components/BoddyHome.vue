@@ -2,7 +2,8 @@
   <div class="bg-dark p-2 shape">
     <div class="div1">
       <v-row class="center">
-        <v-col cols="12" md="6" class="center">
+        <v-col cols="10">
+          <h1>Bem vindo, {{ userEmail }}</h1>
           <h1 class="">Encontre os melhores preços!</h1>
           <h2>
             <router-link to="/search">
@@ -17,7 +18,18 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup></script>
+
+<script lang="ts" setup>
+import { computed } from "vue";
+import { useAuthStore } from "@/store/auth";
+
+const authStore = useAuthStore();
+
+const userEmail = computed(() => {
+  const email = authStore.user?.email || "Visitante";
+  return email.split("@")[0];
+});
+</script>
 
 <style scoped>
 .shape {
