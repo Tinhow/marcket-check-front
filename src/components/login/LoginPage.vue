@@ -30,12 +30,25 @@
         ></v-text-field>
         <v-btn type="submit" color="white" class="mt-4">Login</v-btn>
       </form>
-      <p v-if="error" class="mt-4 text-danger">{{ error }}</p>
+      <p v-if="error" class="mt-4 text-red">{{ error }}</p>
       <p class="mt-4 text-white">
         Não possui uma conta?
         <router-link to="/register" class="text-white">Registre-se</router-link>
       </p>
     </div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+      location="top"
+      position="fixed"
+      :color="snackbarColor"
+    >
+      {{ snackbarText }}
+
+      <template #actions>
+        <v-btn color="white" variant="text" @click="snackbar = false">X</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -49,6 +62,11 @@ const email = ref("");
 const password = ref("");
 const error = ref("");
 
+const snackbar = ref(false);
+const snackbarText = ref("");
+const timeout = 3000;
+const snackbarColor = ref("info");
+
 const router = useRouter();
 const authStore = useAuthStore();
 
@@ -61,18 +79,28 @@ const login = async () => {
       },
     });
     console.log("Resposta da API:", response.data);
-    // Se a autenticação for bem-sucedida, salva o token e redireciona
     if (response.status === 200) {
-      const token = response.data.token; // Supondo que o token venha nesta estrutura
-      console.log("Token JWT:", token); // Exibe o token no console
-      authStore.login(token); // Passando o token para o método de login
-      router.push("/"); // Redireciona para a página inicial após o login
+      snackbarText.value = "Logado com Sucesso";
+      snackbar.value = true;
+      snackbarColor.value = "green";
+      const token = response.data.token;
+      console.log("Token JWT:", token);
+      authStore.login(token);
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } else {
+      snackbarText.value = "Falha ao autenticar. Verifique suas credenciais.";
+      snackbar.value = true;
+      snackbarColor.value = "red";
       throw new Error("Autenticação falhou. Sem token.");
     }
-  } catch (err) {
+  } catch (err: any) {
     error.value = "Falha ao autenticar. Verifique suas credenciais.";
     console.error("Erro de autenticação:", err.message || err);
+    snackbarText.value = "Falha ao autenticar. Verifique suas credenciais.";
+    snackbar.value = true;
+    snackbarColor.value = "red";
   }
 };
 </script>

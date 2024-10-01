@@ -68,7 +68,7 @@ const registerUser = async () => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       router.push("/login");
     }
   } catch (error) {

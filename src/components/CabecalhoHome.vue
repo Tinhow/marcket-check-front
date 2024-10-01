@@ -71,9 +71,10 @@
           <p>FAVORITOS</p>
         </router-link>
       </v-hover>
+      <!-- Conditionally show the cart link -->
+      <v-hover v-if="authStore.isAuthenticated" v-slot="{ isHovering, props }">
+        <v-divider class="link mr-4" inset vertical />
 
-      <v-divider class="link mr-4" inset vertical />
-      <v-hover v-slot="{ isHovering, props }">
         <router-link
           class="link mr-3"
           to="/cart"
