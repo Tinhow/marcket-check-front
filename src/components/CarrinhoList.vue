@@ -5,7 +5,7 @@
     </div>
     <div class="d-flex product-details-container">
       <div
-        v-for="produto in favoritos"
+        v-for="produto in produtos"
         :key="produto.id"
         class="product-details d-flex mt-2"
       >
@@ -23,7 +23,9 @@
               <strong>Preço:</strong> {{ produto.preco }}
             </p>
             <div class="mb-4 mt-auto">
-              <v-btn class="bg-red mr-2 mt-2" @click="removeFavorite(produto)"
+              <v-btn
+                class="bg-red mr-2 mt-2"
+                @click="removeProdCarrinho(produto)"
                 >Remover</v-btn
               >
               <v-btn
@@ -36,12 +38,12 @@
         </v-card>
       </div>
     </div>
-    <div v-if="!favoritos.length">
+    <!-- <div v-if="!produtos.length">
       <p class="text-center text-white">Nenhum produto no Carrinho</p>
       <div>
         <img class="img" src="@/assets/favorites.png" alt="Logo" />
       </div>
-    </div>
+    </div> -->
 
     <v-snackbar
       v-model="snackbar"
@@ -59,46 +61,56 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
+import axios from "axios";
 
-const favoritos = ref([]);
+import { useAuthStore } from "@/store/auth";
+
+const produtos = ref([]);
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 
-async function getFavoritos() {
-  try {
-    const response = await fetch("http://127.0.0.1:3000/favoritos.json", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+async function getCarrinho() {
+  const authStore = useAuthStore(); // Usando a loja de autenticação
+  const userId = authStore.user?.id; // Obtendo o ID do usuário
+  const token = authStore.token; // Obtendo o token
 
-    if (response.ok) {
-      const data = await response.json();
-      favoritos.value = data;
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:3000/carrinhos/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      },
+    );
+
+    if (response.status === 200) {
+      console.log("Produtos no carrinho:", response.data);
     } else {
-      console.error("Erro ao buscar favoritos:", response.statusText);
+      console.error("Erro ao buscar produtos:", response.statusText);
     }
-  } catch (error) {
-    console.error("Erro ao buscar favoritos:", error);
+  } catch (error: any) {
+    console.error("Erro ao buscar produtos:", error.message);
   }
 }
 
-async function removeFavorite(produto) {
+async function removeProdCarrinho(produto: any) {
   try {
     const response = await fetch(
-      `http://127.0.0.1:3000/favoritos/${produto.id}/remove`,
+      `http://127.0.0.1:3000/carrinho/remover_produto/${produto.id}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       },
     );
 
     if (response.ok) {
-      favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
-      snackbarMessage.value = `${produto.nome_produto} foi removido dos favoritos.`;
+      produtos.value = produtos.value.filter((f) => f.id !== produto.id);
+      snackbarMessage.value = `${produto.nome_produto} foi removido dos produtos.`;
       snackbar.value = true;
     } else {
       console.error("Erro ao remover favorito:", response.statusText);
@@ -109,7 +121,7 @@ async function removeFavorite(produto) {
 }
 
 onMounted(() => {
-  getFavoritos();
+  getCarrinho();
 });
 
 const navigateTo = (link: string) => {

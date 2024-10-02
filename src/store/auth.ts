@@ -27,6 +27,7 @@ export const useAuthStore = defineStore("auth", {
     checkAuth() {
       const storedToken = localStorage.getItem("authToken");
       const storedUser = localStorage.getItem("authUser");
+      console.log("Token no localStorage:", storedToken); // Debug
       if (storedToken && storedUser) {
         this.isAuthenticated = true;
         this.token = storedToken;

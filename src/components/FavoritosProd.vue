@@ -39,11 +39,15 @@
                 >Remover</v-btn
               >
               <v-btn
+                class="bg-blue mr-2 mt-2 text-white"
+                @click="addCarrinho(produto)"
+                >add CARRINHO</v-btn
+              >
+              <v-btn
                 class="bg-green mr-2 mt-2"
                 @click="navigateTo(produto.link_to_item)"
                 >supermercado</v-btn
               >
-              <!-- <v-btn class="bg-yellow">mapas</v-btn> -->
             </div>
           </div>
         </v-card>
@@ -112,6 +116,30 @@ async function removeFavorite(produto) {
     if (response.ok) {
       favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
       snackbarMessage.value = `${produto.nome_produto} foi removido dos favoritos.`;
+      snackbar.value = true;
+    } else {
+      console.error("Erro ao remover favorito:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Erro ao remover favorito:", error);
+  }
+}
+
+async function addCarrinho(produto: any) {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:3000/produtos/${produto.id}/adicionar_ao_carrinho`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (response.ok) {
+      favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
+      snackbarMessage.value = `${produto.nome_produto} foi adicionado ao carrinho.`;
       snackbar.value = true;
     } else {
       console.error("Erro ao remover favorito:", response.statusText);
