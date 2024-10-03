@@ -3,6 +3,12 @@
     <div class="d-flex justify-center">
       <h2 class="mx-2 my-2 text-white">Meus Favoritos</h2>
     </div>
+
+    <!-- Botão para adicionar todos ao carrinho -->
+    <div class="d-flex justify-center">
+      <v-btn class="bg-blue text-white" @click="addTodosAoCarrinho">Adicionar Todos ao Carrinho</v-btn>
+    </div>
+
     <div class="d-flex product-details-container">
       <div
         v-for="produto in favoritos"
@@ -38,19 +44,9 @@
               <strong>Preço:</strong> {{ produto.preco }}
             </p>
             <div class="mb-4 mt-auto">
-              <v-btn class="bg-red mr-2 mt-2" @click="removeFavorite(produto)"
-                >Remover</v-btn
-              >
-              <v-btn
-                class="bg-blue mr-2 mt-2 text-white"
-                @click="addCarrinho(produto)"
-                >add CARRINHO</v-btn
-              >
-              <v-btn
-                class="bg-green mr-2 mt-2"
-                @click="navigateTo(produto.link_to_item)"
-                >supermercado</v-btn
-              >
+              <v-btn class="bg-red mr-2 mt-2" @click="removeFavorite(produto)">Remover</v-btn>
+              <v-btn class="bg-blue mr-2 mt-2 text-white" @click="addCarrinho(produto)">add CARRINHO</v-btn>
+              <v-btn class="bg-green mr-2 mt-2" @click="navigateTo(produto.link_to_item)">supermercado</v-btn>
             </div>
           </div>
         </v-card>
@@ -76,7 +72,6 @@
     </v-snackbar>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import api from "@/services/api"; // Importe a instância do axios configurado
@@ -140,6 +135,21 @@ async function addCarrinho(produto: any) {
   }
 }
 
+async function addTodosAoCarrinho() {
+  try {
+    const response = await api.post('/favoritos/adicionar_todos_ao_carrinho');
+
+    if (response.status === 200) {
+      snackbarMessage.value = "Todos os produtos foram adicionados ao carrinho.";
+      snackbar.value = true;
+    } else {
+      console.error("Erro ao adicionar todos ao carrinho:", response.statusText);
+    }
+  } catch (error: any) {
+    console.error("Erro ao adicionar todos ao carrinho:", error.message);
+  }
+}
+
 onMounted(() => {
   getFavoritos();
 });
@@ -152,6 +162,7 @@ const navigateTo = (link: string) => {
   }
 };
 </script>
+
 
 <style scoped>
 .shape {
