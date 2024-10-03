@@ -76,6 +76,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
+import api from "@/services/api"; // Importe a instância do axios configurado
 
 const favoritos = ref([]);
 const snackbar = ref(false);
@@ -83,69 +84,55 @@ const snackbarMessage = ref("");
 
 async function getFavoritos() {
   try {
-    const response = await fetch("http://127.0.0.1:3000/favoritos.json", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    // Realiza a requisição usando a instância do `api`
+    const response = await api.get("/favoritos.json");
 
-    if (response.ok) {
-      const data = await response.json();
-      favoritos.value = data;
+    if (response.status === 200) {
+      favoritos.value = response.data;
     } else {
       console.error("Erro ao buscar favoritos:", response.statusText);
+      snackbarMessage.value = "Erro ao carregar os favoritos.";
+      snackbar.value = true;
     }
-  } catch (error) {
-    console.error("Erro ao buscar favoritos:", error);
+  } catch (error: any) {
+    console.error("Erro ao buscar favoritos:", error.message);
+    snackbarMessage.value = "Erro ao carregar os favoritos.";
+    snackbar.value = true;
   }
 }
 
-async function removeFavorite(produto) {
+async function removeFavorite(produto: { id: number; nome_produto: string }) {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:3000/favoritos/${produto.id}/remove`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    const response = await api.delete(`/favoritos/${produto.id}/remove`);
 
-    if (response.ok) {
+    if (response.status === 200) {
       favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
       snackbarMessage.value = `${produto.nome_produto} foi removido dos favoritos.`;
       snackbar.value = true;
     } else {
       console.error("Erro ao remover favorito:", response.statusText);
     }
-  } catch (error) {
-    console.error("Erro ao remover favorito:", error);
+  } catch (error: any) {
+    console.error("Erro ao remover favorito:", error.message);
   }
 }
 
 async function addCarrinho(produto: any) {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:3000/produtos/${produto.id}/adicionar_ao_carrinho`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
+    // Usando a instância do axios para adicionar ao carrinho
+    const response = await api.post(
+      `/produtos/${produto.id}/adicionar_ao_carrinho`,
     );
 
-    if (response.ok) {
+    if (response.status === 200) {
       favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
       snackbarMessage.value = `${produto.nome_produto} foi adicionado ao carrinho.`;
       snackbar.value = true;
     } else {
-      console.error("Erro ao remover favorito:", response.statusText);
+      console.error("Erro ao adicionar ao carrinho:", response.statusText);
     }
-  } catch (error) {
-    console.error("Erro ao remover favorito:", error);
+  } catch (error: any) {
+    console.error("Erro ao adicionar ao carrinho:", error.message);
   }
 }
 

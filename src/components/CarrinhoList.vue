@@ -3,9 +3,12 @@
     <div class="d-flex justify-center">
       <h2 class="mx-2 my-2 text-white">Meu Carrinho</h2>
     </div>
+
     <div class="d-flex product-details-container">
+      <!-- Exibe produtos apenas se houver algum no carrinho -->
       <div
         v-for="produto in produtos"
+        v-if="produtos.length"
         :key="produto.id"
         class="product-details d-flex mt-2"
       >
@@ -31,19 +34,21 @@
               <v-btn
                 class="bg-green mr-2 mt-2"
                 @click="navigateTo(produto.link_to_item)"
-                >supermercado</v-btn
+                >Supermercado</v-btn
               >
             </div>
           </div>
         </v-card>
       </div>
-    </div>
-    <!-- <div v-if="!produtos.length">
-      <p class="text-center text-white">Nenhum produto no Carrinho</p>
-      <div>
-        <img class="img" src="@/assets/favorites.png" alt="Logo" />
+
+      <!-- Se não houver produtos, exibe mensagem -->
+      <div v-else>
+        <p class="text-center text-white">Nenhum produto no carrinho.</p>
+        <div>
+          <img class="img" src="@/assets/favorites.png" alt="Logo" />
+        </div>
       </div>
-    </div> -->
+    </div>
 
     <v-snackbar
       v-model="snackbar"
@@ -61,62 +66,58 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
-
-import { useAuthStore } from "@/store/auth";
+import api from "@/services/api"; // Importe a instância do axios configurado com cache e token
 
 const produtos = ref([]);
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 
 async function getCarrinho() {
-  const authStore = useAuthStore(); // Usando a loja de autenticação
-  const userId = authStore.user?.id; // Obtendo o ID do usuário
-  const token = authStore.token; // Obtendo o token
-
   try {
-    const response = await axios.get(
-      `http://127.0.0.1:3000/carrinhos/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      },
-    );
+    // Realiza a requisição usando a instância do `api` já configurada
+    const response = await api.get("/carrinhos/2", { withCredentials: true });
 
     if (response.status === 200) {
-      console.log("Produtos no carrinho:", response.data);
+      produtos.value = response.data.produtos; // Preenche a lista de produtos
+      snackbarMessage.value = "Carrinho carregado com sucesso!";
+      snackbar.value = true;
+      console.log("Produtos no carrinho:", produtos.value);
     } else {
       console.error("Erro ao buscar produtos:", response.statusText);
+      snackbarMessage.value = "Erro ao carregar o carrinho.";
+      snackbar.value = true;
     }
   } catch (error: any) {
-    console.error("Erro ao buscar produtos:", error.message);
+    // Tratar erro de autenticação ou qualquer outro erro
+    if (error.response?.status === 401) {
+      console.error("Usuário não autorizado. Faça login novamente.");
+      snackbarMessage.value = "Usuário não autorizado. Faça login novamente.";
+    } else {
+      console.error("Erro ao buscar produtos:", error.message);
+      snackbarMessage.value = "Erro ao carregar o carrinho.";
+    }
+    snackbar.value = true;
   }
 }
 
 async function removeProdCarrinho(produto: any) {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:3000/carrinho/remover_produto/${produto.id}`,
+    const response = await api.delete(
+      `/carrinho/remover_produto/${produto.id}`,
       {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        withCredentials: true, // Certifique-se de que os cookies são enviados
       },
     );
 
-    if (response.ok) {
+    if (response.status === 200) {
       produtos.value = produtos.value.filter((f) => f.id !== produto.id);
       snackbarMessage.value = `${produto.nome_produto} foi removido dos produtos.`;
       snackbar.value = true;
     } else {
-      console.error("Erro ao remover favorito:", response.statusText);
+      console.error("Erro ao remover produto:", response.statusText);
     }
   } catch (error) {
-    console.error("Erro ao remover favorito:", error);
+    console.error("Erro ao remover produto:", error);
   }
 }
 

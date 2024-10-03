@@ -71,7 +71,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const login = async () => {
   try {
-    const response = await axios.post("http://127.0.0.1:3000/users/sign_in", {
+    const response = await axios.post("http://127.0.0.1:3000/users/login", {
       user: {
         email: email.value,
         password: password.value,

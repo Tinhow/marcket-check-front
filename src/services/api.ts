@@ -1,5 +1,5 @@
 // src/services/api.ts
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { setupCache } from "axios-cache-adapter";
 
 // Definindo o tipo para o produto (opcional, mas recomendável)
@@ -25,9 +25,25 @@ const cache = setupCache({
 });
 
 // Cria a instância do Axios com cache
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: "http://127.0.0.1:3000", // URL base para a API
   adapter: cache.adapter, // Adiciona o adaptador de cache
+  timeout: 10000, // Timeout de 10 segundos
+  withCredentials: true, // Isso garante que os cookies sejam enviados em todas as requisições
 });
+
+// Interceptor de requisições para adicionar o token de autenticação
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`; // Usando a notação de ponto
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 export default api;

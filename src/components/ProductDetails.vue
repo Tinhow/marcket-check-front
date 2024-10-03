@@ -112,6 +112,7 @@ async function fetchProduct() {
 
 const addFavorite = async (product) => {
   try {
+    const token = localStorage.getItem("token"); // ou de onde você armazena o token
     const response = await fetch(
       `http://127.0.0.1:3000/favoritos/${product.id}/add`,
       {
@@ -119,6 +120,7 @@ const addFavorite = async (product) => {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          Authorization: `Bearer ${token}`, // Adicionando o token no cabeçalho
         },
         body: JSON.stringify({ id: product.id }),
       },
