@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <div class="shape bg-dark p-2">
     <div class="d-flex justify-center">
@@ -5,7 +6,6 @@
     </div>
 
     <div class="d-flex product-details-container">
-      <!-- Exibe produtos apenas se houver algum no carrinho -->
       <div
         v-for="produto in produtos"
         v-if="produtos.length"
@@ -65,20 +65,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import api from "@/services/api"; // Importe a instância do axios configurado com cache e token
+import { useAuthStore } from "@/store/auth";
 
 const produtos = ref([]);
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 
+const authStore = useAuthStore();
+
 async function getCarrinho() {
   try {
-    // Realiza a requisição usando a instância do `api` já configurada
-    const response = await api.get("/carrinhos/2", { withCredentials: true });
+    const userId = authStore.user?.id;
+    console.log(authStore.user?.id);
+    const response = await api.get(`/carrinhos/${userId}`, {
+      withCredentials: true,
+    });
 
     if (response.status === 200) {
-      produtos.value = response.data.produtos; // Preenche a lista de produtos
+      produtos.value = response.data.produtos;
       snackbarMessage.value = "Carrinho carregado com sucesso!";
       snackbar.value = true;
       console.log("Produtos no carrinho:", produtos.value);
@@ -88,7 +94,6 @@ async function getCarrinho() {
       snackbar.value = true;
     }
   } catch (error: any) {
-    // Tratar erro de autenticação ou qualquer outro erro
     if (error.response?.status === 401) {
       console.error("Usuário não autorizado. Faça login novamente.");
       snackbarMessage.value = "Usuário não autorizado. Faça login novamente.";
@@ -113,6 +118,8 @@ async function removeProdCarrinho(produto: any) {
       produtos.value = produtos.value.filter((f) => f.id !== produto.id);
       snackbarMessage.value = `${produto.nome_produto} foi removido dos produtos.`;
       snackbar.value = true;
+      // Chame getCarrinho para garantir que a lista esteja atualizada
+      await getCarrinho(); // Atualiza a lista após a remoção
     } else {
       console.error("Erro ao remover produto:", response.statusText);
     }
@@ -121,8 +128,16 @@ async function removeProdCarrinho(produto: any) {
   }
 }
 
-onMounted(() => {
+function initialize() {
   getCarrinho();
+}
+
+initialize();
+
+watch(produtos, (newValue, oldValue) => {
+  if (newValue.length !== oldValue.length) {
+    getCarrinho();
+  }
 });
 
 const navigateTo = (link: string) => {

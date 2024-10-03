@@ -119,13 +119,14 @@ async function removeFavorite(produto: { id: number; nome_produto: string }) {
 
 async function addCarrinho(produto: any) {
   try {
-    // Usando a instância do axios para adicionar ao carrinho
     const response = await api.post(
       `/produtos/${produto.id}/adicionar_ao_carrinho`,
     );
 
     if (response.status === 200) {
-      favoritos.value = favoritos.value.filter((f) => f.id !== produto.id);
+      // Atualiza a lista de favoritos localmente removendo o produto
+      removeFavorite(produto);
+
       snackbarMessage.value = `${produto.nome_produto} foi adicionado ao carrinho.`;
       snackbar.value = true;
     } else {
