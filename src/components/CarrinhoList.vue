@@ -86,11 +86,19 @@ const snackbarMessage = ref("");
 const authStore = useAuthStore();
 
 // Função para organizar o caminho
-async function organizarCaminho() {
+async function organizarCaminho() { 
   try {
-    const response = await api.get("/carrinhos/organizar_caminho", {});
+    const response = await api.get("/carrinhos/organizar_caminho", {
+      withCredentials: true, // Adicione isso se necessário para autenticação
+    });
 
     if (response.status === 200) {
+      // Ordena os produtos pela fileira antes de atualizar a lista
+      produtos.value = response.data.itens.sort((a, b) => a.fileira_numero - b.fileira_numero);
+      
+      console.log("Produtos organizados:", produtos.value);
+
+      // Exibe mensagem de sucesso
       snackbarMessage.value = "Caminho organizado com sucesso!";
       snackbar.value = true;
     } else {
@@ -104,6 +112,8 @@ async function organizarCaminho() {
   }
 }
 
+
+
 async function getCarrinho() {
   try {
     const userId = authStore.user?.id;
@@ -113,7 +123,7 @@ async function getCarrinho() {
     });
 
     if (response.status === 200) {
-      produtos.value = response.data.produtos;
+      produtos.value = response.data.itens;
       snackbarMessage.value = "Carrinho carregado com sucesso!";
       snackbar.value = true;
       console.log("Produtos no carrinho:", produtos.value);
@@ -134,21 +144,22 @@ async function getCarrinho() {
   }
 }
 
+import { nextTick } from 'vue';
+
 async function removeProdCarrinho(produto: any) {
   try {
-    const response = await api.delete(
-      `/carrinho/remover_produto/${produto.id}`,
-      {
-        withCredentials: true, // Certifique-se de que os cookies são enviados
-      },
-    );
+    const response = await api.delete(`/carrinho/remover_produto/${produto.id}`, {
+      withCredentials: true,
+    });
 
     if (response.status === 200) {
-      produtos.value = produtos.value.filter((f) => f.id !== produto.id);
-      snackbarMessage.value = `${produto.nome_produto} foi removido dos produtos.`;
-      snackbar.value = true;
-      // Chame getCarrinho para garantir que a lista esteja atualizada
-      await getCarrinho(); // Atualiza a lista após a remoção
+      // Encontrar o índice do produto a ser removido
+      const index = produtos.value.findIndex((p: any) => p.id === produto.id);
+      if (index !== -1) {
+        produtos.value.splice(index, 1); // Remove o produto do array
+        snackbarMessage.value = `${produto.nome_produto} foi removido dos produtos.`;
+        snackbar.value = true;
+      }
     } else {
       console.error("Erro ao remover produto:", response.statusText);
     }
@@ -157,6 +168,10 @@ async function removeProdCarrinho(produto: any) {
   }
 }
 
+
+
+
+
 function initialize() {
   getCarrinho();
 }
@@ -164,10 +179,14 @@ function initialize() {
 initialize();
 
 watch(produtos, (newValue, oldValue) => {
-  if (newValue.length !== oldValue.length) {
-    getCarrinho();
+  // Verifica se newValue e oldValue estão definidos e têm a propriedade length
+  if (Array.isArray(newValue) && Array.isArray(oldValue)) {
+    if (newValue.length !== oldValue.length) {
+      getCarrinho();
+    }
   }
 });
+
 
 const navigateTo = (link: string) => {
   if (link) {
