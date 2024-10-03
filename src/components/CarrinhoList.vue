@@ -1,8 +1,15 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <div class="shape bg-dark p-2">
-    <div class="d-flex justify-center">
+    <div class="d-flex justify-content-between align-items-center">
       <h2 class="mx-2 my-2 text-white">Meu Carrinho</h2>
+      <v-btn
+        class="bg-blue text-white"
+        @click="organizarCaminho"
+        icon
+      >
+        <v-icon>mdi-sort-ascending</v-icon> <!-- Você pode usar um ícone de sua preferência -->
+      </v-btn>
     </div>
 
     <div class="d-flex product-details-container">
@@ -21,6 +28,9 @@
             <p><strong>Categoria:</strong> {{ produto.categoria }}</p>
             <p>
               <strong>Marca:</strong> {{ produto.marca || "Não disponível" }}
+            </p>
+            <p>
+              <strong>Ordem na prateleira:</strong> {{ produto.indicacao_no_mercado }}
             </p>
             <p class="text-red my-2 text-h6">
               <strong>Preço:</strong> {{ produto.preco }}
@@ -74,6 +84,25 @@ const snackbar = ref(false);
 const snackbarMessage = ref("");
 
 const authStore = useAuthStore();
+
+// Função para organizar o caminho
+async function organizarCaminho() {
+  try {
+    const response = await api.get("/carrinhos/organizar_caminho", {});
+
+    if (response.status === 200) {
+      snackbarMessage.value = "Caminho organizado com sucesso!";
+      snackbar.value = true;
+    } else {
+      snackbarMessage.value = "Erro ao organizar o caminho.";
+      snackbar.value = true;
+    }
+  } catch (error) {
+    console.error("Erro ao organizar o caminho:", error);
+    snackbarMessage.value = "Erro ao organizar o caminho.";
+    snackbar.value = true;
+  }
+}
 
 async function getCarrinho() {
   try {
