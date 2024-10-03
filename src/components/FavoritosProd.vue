@@ -31,6 +31,9 @@
               <strong>Nome do Mercado:</strong>
               {{ produto.nome_mercado || "Não disponível" }}
             </p>
+            <p>
+              <strong>Ordem na prateleira:</strong> {{ produto.indicacao_no_mercado }}
+            </p>
             <p class="text-red my-2 text-h6">
               <strong>Preço:</strong> {{ produto.preco }}
             </p>
